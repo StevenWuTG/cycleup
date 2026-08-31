@@ -6,6 +6,9 @@ export const mockListings = [
     category: ["Furniture", "Wood"],
     seller: "EcoWoodworks",
     location: "Portland, OR",
+    condition: "Like New",
+    description: "A floating shelf built from reclaimed Douglas fir barn wood. Hand-sanded and finished with food-safe oil. 24\" x 8\".",
+    story: "Salvaged from a century-old barn slated for demolition outside Portland — every knot and nail hole is original.",
   },
   {
     id: 2,
@@ -14,6 +17,9 @@ export const mockListings = [
     category: ["Fashion", "Bags"],
     seller: "ThreadRevival",
     location: "Austin, TX",
+    condition: "New (upcycled)",
+    description: "Roomy everyday tote sewn from three pairs of reclaimed denim jeans, with a canvas lining and reinforced straps.",
+    story: "Made from donated jeans that no longer fit their owners — nothing about them was worn out.",
   },
   {
     id: 3,
@@ -22,6 +28,9 @@ export const mockListings = [
     category: ["Lighting", "Vintage"],
     seller: "GlowGreen",
     location: "Brooklyn, NY",
+    condition: "Good",
+    description: "A wide-mouth mason jar wired into a warm-glow table lamp, mounted on a reclaimed wood base. Includes a dimmable bulb.",
+    story: "The jar came from a shuttered upstate general store; the base is offcut oak from a furniture shop's scrap bin.",
   },
   {
     id: 4,
@@ -30,6 +39,9 @@ export const mockListings = [
     category: ["Decor", "Industrial"],
     seller: "CycleArt",
     location: "Denver, CO",
+    condition: "Good",
+    description: "A working wall clock built around a 26\" bicycle wheel, spokes intact, with a quiet quartz movement at the hub.",
+    story: "The wheel came off a commuter bike that was totaled in a collision — the rider donated it rather than scrap it.",
   },
   {
     id: 5,
@@ -38,6 +50,9 @@ export const mockListings = [
     category: ["Furniture", "Pallet"],
     seller: "PalletWorks",
     location: "Seattle, WA",
+    condition: "New (upcycled)",
+    description: "Low-profile coffee table built from stacked shipping pallet boards on locking caster wheels. Seats a tray or stack of books nicely.",
+    story: "Built from pallets pulled from a warehouse loading dock before they were headed to the incinerator.",
   },
   {
     id: 6,
@@ -46,6 +61,9 @@ export const mockListings = [
     category: ["Garden", "Planters"],
     seller: "GreenThumb",
     location: "Chicago, IL",
+    condition: "New (upcycled)",
+    description: "Set of three drainage-drilled tin cans, hand-painted and ready for a windowsill herb garden.",
+    story: "Cans collected from a neighborhood restaurant's recycling bin, cleaned and given a second life.",
   },
   {
     id: 7,
@@ -54,6 +72,9 @@ export const mockListings = [
     category: ["Textiles", "Home"],
     seller: "SilkRevive",
     location: "San Francisco, CA",
+    condition: "New (upcycled)",
+    description: "18\" throw pillow cover patchworked from remnant sari silk in warm jewel tones. Cover only, insert not included.",
+    story: "Sewn from offcuts left over from a sari tailoring shop that would otherwise have gone to landfill.",
   },
   {
     id: 8,
@@ -62,6 +83,9 @@ export const mockListings = [
     category: ["Furniture", "Industrial"],
     seller: "TreadDesigns",
     location: "Nashville, TN",
+    condition: "Good",
+    description: "A retired tire, wrapped in braided jute rope and topped with a cushioned wood lid — doubles as extra seating or a side table.",
+    story: "Sourced from a local tire shop's pile of worn treads that couldn't be resold or retreaded.",
   },
   {
     id: 9,
@@ -70,7 +94,27 @@ export const mockListings = [
     category: ["Decor", "Art"],
     seller: "CapCraft",
     location: "Miami, FL",
+    condition: "New (upcycled)",
+    description: "Round wall mirror framed in a hand-laid mosaic of flattened bottle caps in ocean blues and greens.",
+    story: "Caps collected over a year from local bars and restaurants as part of a neighborhood cleanup initiative.",
   },
 ];
 
 export const categories = ["All", "Furniture", "Fashion", "Decor", "Garden", "Textiles", "Lighting", "Art"];
+
+export const tagColors = {
+  Furniture: "bg-amber-100 text-amber-800",
+  Fashion:   "bg-emerald-100 text-emerald-800",
+  Decor:     "bg-yellow-100 text-yellow-800",
+  Garden:    "bg-green-100 text-green-800",
+  Textiles:  "bg-orange-100 text-orange-800",
+  Lighting:  "bg-yellow-100 text-yellow-800",
+  Art:       "bg-rose-100 text-rose-800",
+  Industrial:"bg-slate-100 text-slate-700",
+  Vintage:   "bg-amber-100 text-amber-800",
+  Bags:      "bg-teal-100 text-teal-800",
+  Pallet:    "bg-lime-100 text-lime-800",
+  Planters:  "bg-green-100 text-green-800",
+  Home:      "bg-amber-100 text-amber-800",
+  Wood:      "bg-orange-100 text-orange-800",
+};

@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { Search, SlidersHorizontal, X, Leaf } from "lucide-react";
 import ListingCard from "../components/ListingCard";
-import { mockListings, categories } from "../data/mockListings";
+import { categories } from "../data/mockListings";
+import { useListings } from "../context/listings-context";
 
 const sortOptions = ["Newest", "Price: Low to High", "Price: High to Low"];
 
 export default function Marketplace() {
+  const { listings } = useListings();
   const [search, setSearch]             = useState("");
   const [activeCategory, setCategory]   = useState("All");
   const [sort, setSort]                 = useState("Newest");
 
-  const filtered = mockListings
+  const filtered = listings
     .filter(item => {
       const q = search.toLowerCase();
       return (
@@ -20,7 +22,7 @@ export default function Marketplace() {
     })
     .sort((a, b) =>
       sort === "Price: Low to High"  ? a.price - b.price :
-      sort === "Price: High to Low"  ? b.price - a.price : a.id - b.id
+      sort === "Price: High to Low"  ? b.price - a.price : b.id - a.id
     );
 
   return (
@@ -36,7 +38,7 @@ export default function Marketplace() {
           >
             Find something unique
           </h1>
-          <p className="text-white/60 text-base mt-2">{mockListings.length} upcycled items from independent makers</p>
+          <p className="text-white/60 text-base mt-2">{listings.length} upcycled items from independent makers</p>
         </div>
       </div>
 

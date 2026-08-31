@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Leaf, CheckCircle, Upload, Tag, DollarSign, AlignLeft, Type, MapPin } from "lucide-react";
 import { categories } from "../data/mockListings";
+import { useListings } from "../context/listings-context";
 
 const itemCategories = categories.filter(c => c !== "All");
 
@@ -24,9 +26,10 @@ function Field({ label, required, icon, error, children }) {
 }
 
 export default function PostItem() {
-  const [form, setForm]       = useState(initialForm);
-  const [submitted, setDone]  = useState(false);
-  const [errors, setErrors]   = useState({});
+  const { addListing }            = useListings();
+  const [form, setForm]           = useState(initialForm);
+  const [createdListing, setDone] = useState(null);
+  const [errors, setErrors]       = useState({});
 
   const inputClass = err =>
     `w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788] transition bg-white text-[#1a2e1e] placeholder:text-[#c4a882] ${
@@ -61,10 +64,20 @@ export default function PostItem() {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
-    setDone(true);
+    const listing = addListing({
+      title: form.title.trim(),
+      description: form.description.trim(),
+      price: Number(form.price),
+      category: form.category,
+      condition: form.condition,
+      location: form.location.trim(),
+      story: form.story.trim(),
+      seller: "You",
+    });
+    setDone(listing);
   }
 
-  if (submitted) return (
+  if (createdListing) return (
     <div className="min-h-screen bg-[#f8f4ed] flex items-center justify-center px-4 py-12" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <div className="bg-white rounded-3xl shadow-lg border border-[#e8e0d5] p-8 sm:p-12 max-w-md w-full text-center">
         <div className="w-16 h-16 bg-[#d8f3dc] rounded-full flex items-center justify-center mx-auto mb-5">
@@ -74,14 +87,14 @@ export default function PostItem() {
           It's live!
         </h2>
         <p className="text-[#6b7280] mb-6">
-          <span className="font-semibold text-[#2d6a4f]">"{form.title}"</span> is now on the CycleUp marketplace.
+          <span className="font-semibold text-[#2d6a4f]">"{createdListing.title}"</span> is now on the CycleUp marketplace.
         </p>
         <div className="bg-[#f0faf3] border border-[#d8f3dc] rounded-2xl p-5 mb-6 text-left space-y-2">
           {[
-            ["Title",      form.title],
-            ["Price",      `$${Number(form.price).toFixed(2)}`],
-            ["Categories", form.category.join(", ")],
-            ["Condition",  form.condition],
+            ["Title",      createdListing.title],
+            ["Price",      `$${Number(createdListing.price).toFixed(2)}`],
+            ["Categories", createdListing.category.join(", ")],
+            ["Condition",  createdListing.condition],
           ].map(([k, v]) => (
             <div key={k} className="flex justify-between text-sm gap-3">
               <span className="text-[#6b7280]">{k}</span>
@@ -89,12 +102,20 @@ export default function PostItem() {
             </div>
           ))}
         </div>
-        <button
-          onClick={() => { setForm(initialForm); setDone(false); }}
-          className="w-full bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold py-3.5 rounded-xl transition-colors"
-        >
-          List Another Item
-        </button>
+        <div className="flex flex-col gap-3">
+          <Link
+            to={`/item/${createdListing.id}`}
+            className="block w-full text-center bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold py-3.5 rounded-xl transition-colors"
+          >
+            View Listing
+          </Link>
+          <button
+            onClick={() => { setForm(initialForm); setDone(null); }}
+            className="w-full text-sm font-semibold text-[#2d6a4f] hover:underline"
+          >
+            List Another Item
+          </button>
+        </div>
       </div>
     </div>
   );

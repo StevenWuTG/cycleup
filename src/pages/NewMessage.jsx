@@ -58,7 +58,7 @@ export default function NewMessage() {
     return <Message title="Item not found" body="This listing may have been removed." to="/marketplace" linkText="← Back to Marketplace" />;
   }
   if (!listing.user_id) {
-    return <Message title="Demo listing" body="This is a sample listing with no seller account, so there's no one to message." to={`/item/${listing.id}`} linkText="← Back to the listing" />;
+    return <Message title="Sample listing" body="This is a sample listing with no seller account, so there's no one to message." to={`/item/${listing.id}`} linkText="← Back to the listing" />;
   }
   if (listing.user_id === user.id) {
     return <Message title="This is your listing" body="You can't message yourself. Buyers will reach you from your Messages inbox." to={`/item/${listing.id}`} linkText="← Back to the listing" />;

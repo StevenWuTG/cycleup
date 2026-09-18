@@ -78,6 +78,11 @@ export default function ItemDetail() {
           {/* Info */}
           <div className="lg:col-span-2 flex flex-col">
             <div className="flex flex-wrap gap-1.5 mb-3">
+              {!listing.user_id && (
+                <span className="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                  Sample listing
+                </span>
+              )}
               {listing.category.map(cat => (
                 <span
                   key={cat}
@@ -174,7 +179,7 @@ export default function ItemDetail() {
                     <MessageCircle size={17} />
                     Contact Seller
                   </button>
-                  <p className="text-xs text-[#a0785a] text-center mt-2">Demo listing — no seller account to message</p>
+                  <p className="text-xs text-[#a0785a] text-center mt-2">Sample listing — there's no seller account to message</p>
                 </>
               )
             )}

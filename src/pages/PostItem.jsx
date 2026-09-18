@@ -87,7 +87,7 @@ export default function PostItem() {
                   "Use a clear, descriptive title with the material",
                   "Include dimensions in the description",
                   "Share the original item's story — buyers love context",
-                  "Accurate pricing gets 3× more views",
+                  "Price fairly — check similar items in the marketplace",
                   "Select all relevant categories for more exposure",
                 ].map((tip, i) => (
                   <li key={i} className="flex gap-2.5">
@@ -100,7 +100,7 @@ export default function PostItem() {
 
             <div className="bg-white rounded-3xl border border-[#e8e0d5] p-6">
               <div className="text-2xl font-bold text-[#2d6a4f] mb-1">Free to list</div>
-              <p className="text-sm text-[#6b7280]">We only take a small commission when your item sells. No upfront costs.</p>
+              <p className="text-sm text-[#6b7280]">Posting costs nothing. Interested buyers message you directly to arrange the sale.</p>
             </div>
           </div>
         </div>

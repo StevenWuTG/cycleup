@@ -1,11 +1,22 @@
 import { Link } from "react-router-dom";
-import { Leaf, Recycle, ShoppingBag, Heart, ArrowRight, Star, TrendingUp, Package, Users } from "lucide-react";
+import { Leaf, Recycle, ShoppingBag, Heart, ArrowRight, Camera, MapPin, MessageCircle, Check } from "lucide-react";
 
-const stats = [
-  { icon: <Package size={20} />, value: "12,400+", label: "Items Upcycled" },
-  { icon: <Users size={20} />,   value: "3,200+",  label: "Active Sellers" },
-  { icon: <TrendingUp size={20} />, value: "18 tons", label: "Waste Diverted" },
-  { icon: <Star size={20} />,    value: "4.9 / 5",  label: "Avg. Rating" },
+const steps = [
+  {
+    icon: <Camera size={20} />,
+    title: "List your piece",
+    desc: "Add photos, tell the story of where the materials came from, and set your price. It's free to list.",
+  },
+  {
+    icon: <MapPin size={20} />,
+    title: "Get found nearby",
+    desc: "Shoppers can search by category and sort by distance, so your work reaches people close to you.",
+  },
+  {
+    icon: <MessageCircle size={20} />,
+    title: "Connect and hand it off",
+    desc: "Chat with buyers in the app, then arrange the sale directly with each other.",
+  },
 ];
 
 const features = [
@@ -17,19 +28,38 @@ const features = [
   {
     icon: <ShoppingBag size={22} className="text-[#2d6a4f]" />,
     title: "Shop with Purpose",
-    desc: "Browse hundreds of handcrafted upcycled items — furniture, fashion, art, home goods — from independent creators worldwide.",
+    desc: "Browse handcrafted upcycled goods — furniture, fashion, art, home décor — from independent makers, and sort by what's nearest to you.",
   },
   {
     icon: <Heart size={22} className="text-[#2d6a4f]" />,
     title: "Support Local Makers",
-    desc: "100% of proceeds go directly to artisans who pour their craft into sustainable, eco-conscious goods you can feel good about.",
+    desc: "Buy directly from the person who made it. Ask questions, hear the story behind each piece, and arrange the sale with the maker.",
   },
 ];
 
-const testimonials = [
-  { name: "Sarah K.", location: "Portland, OR", text: "Found the most beautiful reclaimed wood table. It arrived even better than pictured — the maker left a note about where the wood came from.", stars: 5 },
-  { name: "Marcus T.", location: "Brooklyn, NY", text: "Sold three upcycled lamps in my first week. CycleUp connected me with buyers who actually care about sustainable craft.", stars: 5 },
-  { name: "Priya N.", location: "Austin, TX", text: "Love knowing every purchase keeps something out of a landfill. I've redecorated my whole apartment through CycleUp.", stars: 5 },
+const audiences = [
+  {
+    icon: <Heart size={22} />,
+    title: "For makers",
+    points: [
+      "Free to list, with photos and the story behind each piece",
+      "Your own seller page to show everything you've made",
+      "Chat with interested buyers right in the app",
+    ],
+    to: "/post",
+    cta: "Start selling",
+  },
+  {
+    icon: <ShoppingBag size={22} />,
+    title: "For shoppers",
+    points: [
+      "Search by item, seller or place, and filter by category",
+      "Sort by distance to find pieces close to you",
+      "Message the maker before you buy",
+    ],
+    to: "/marketplace",
+    cta: "Browse the marketplace",
+  },
 ];
 
 const recentItems = [
@@ -123,18 +153,28 @@ export default function Landing() {
         <div className="h-10" />
       </section>
 
-      {/* ── Stats ────────────────────────────────────────── */}
+      {/* ── How it works ─────────────────────────────────── */}
       {/* -mt-px overlaps the hero's wave by a pixel, hiding a sub-pixel seam */}
-      <section className="relative -mt-px bg-[#f8f4ed] py-14">
+      <section className="relative -mt-px bg-[#f8f4ed] pt-16 pb-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {stats.map(({ icon, value, label }) => (
-              <div key={label} className="bg-white rounded-2xl p-6 shadow-sm border border-[#e8e0d5] flex flex-col items-center text-center gap-2">
+          <div className="text-center mb-10">
+            <p className="text-sm font-semibold text-[#52b788] uppercase tracking-widest mb-3">How it works</p>
+            <h2
+              style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+              className="text-3xl lg:text-4xl font-bold text-[#1b4332]"
+            >
+              From workshop to new home
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            {steps.map(({ icon, title, desc }, i) => (
+              <div key={title} className="bg-white rounded-2xl p-6 shadow-sm border border-[#e8e0d5] flex flex-col items-center text-center gap-2">
                 <div className="w-10 h-10 rounded-xl bg-[#d8f3dc] flex items-center justify-center text-[#2d6a4f]">
                   {icon}
                 </div>
-                <div className="text-2xl xl:text-3xl font-bold text-[#1b4332]">{value}</div>
-                <div className="text-sm text-[#8d8073] font-medium">{label}</div>
+                <div className="text-xs font-semibold text-[#8d8073] uppercase tracking-widest">Step {i + 1}</div>
+                <h3 className="text-lg font-bold text-[#1b4332]">{title}</h3>
+                <p className="text-sm text-[#6b7280] leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -173,36 +213,42 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Testimonials ─────────────────────────────────── */}
+      {/* ── Who it's for ─────────────────────────────────── */}
       <section className="bg-[#1b4332] py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <p className="text-sm font-semibold text-[#74c69d] uppercase tracking-widest mb-3">Community Love</p>
+            <p className="text-sm font-semibold text-[#74c69d] uppercase tracking-widest mb-3">Who it's for</p>
             <h2
               style={{ fontFamily: "'Fraunces', Georgia, serif" }}
               className="text-4xl font-bold text-white"
             >
-              Makers & shoppers agree
+              Made for makers and shoppers
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map(t => (
-              <div key={t.name} className="bg-white/8 border border-white/15 rounded-3xl p-7 backdrop-blur-sm">
-                <div className="flex gap-1 mb-4">
-                  {Array.from({ length: t.stars }).map((_, i) => (
-                    <Star key={i} size={14} className="text-[#ffd166] fill-[#ffd166]" />
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {audiences.map(a => (
+              <div key={a.title} className="bg-white/8 border border-white/15 rounded-3xl p-8 backdrop-blur-sm flex flex-col">
+                <div className="w-11 h-11 rounded-2xl bg-[#2d6a4f] flex items-center justify-center text-[#74c69d] mb-4">
+                  {a.icon}
+                </div>
+                <h3 style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-2xl font-bold text-white mb-4">
+                  {a.title}
+                </h3>
+                <ul className="space-y-3 mb-7">
+                  {a.points.map(point => (
+                    <li key={point} className="flex gap-2.5 text-sm text-white/80 leading-relaxed">
+                      <Check size={16} className="text-[#74c69d] shrink-0 mt-0.5" />
+                      {point}
+                    </li>
                   ))}
-                </div>
-                <p className="text-white/85 text-sm leading-relaxed mb-5">"{t.text}"</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-[#2d6a4f] flex items-center justify-center text-white text-sm font-bold shrink-0">
-                    {t.name[0]}
-                  </div>
-                  <div>
-                    <div className="font-semibold text-white text-sm">{t.name}</div>
-                    <div className="text-[#74c69d] text-xs">{t.location}</div>
-                  </div>
-                </div>
+                </ul>
+                <Link
+                  to={a.to}
+                  className="mt-auto inline-flex items-center gap-2 text-[#74c69d] hover:text-white font-semibold text-sm transition-colors"
+                >
+                  {a.cta}
+                  <ArrowRight size={15} />
+                </Link>
               </div>
             ))}
           </div>
@@ -224,7 +270,7 @@ export default function Landing() {
                 Ready to close the loop?
               </h2>
               <p className="text-white/70 text-lg mb-8 max-w-md mx-auto">
-                Join thousands of eco-conscious makers and shoppers building a circular economy.
+                Join the makers and shoppers building a circular economy, one upcycled piece at a time.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link

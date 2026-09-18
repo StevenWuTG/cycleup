@@ -23,9 +23,13 @@ export default function ListingCard({ listing }) {
         </div>
 
         <div className="flex items-center gap-1 text-xs text-[#8d8073] mb-3">
-          <MapPin size={11} className="shrink-0" />
-          <span>{listing.location}</span>
-          <span className="mx-1 text-[#c4a882]">·</span>
+          {listing.location && (
+            <>
+              <MapPin size={11} className="shrink-0" />
+              <span>{listing.location}</span>
+              <span className="mx-1 text-[#c4a882]">·</span>
+            </>
+          )}
           <span className="text-[#a0785a] font-medium truncate">{listing.seller}</span>
         </div>
 

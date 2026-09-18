@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Leaf, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../context/auth-context";
+import { useMessages } from "../context/messages-context";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -13,6 +14,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const { user, username, signOut } = useAuth();
+  const { unread } = useMessages();
 
   function handleSignOut() {
     setOpen(false);
@@ -61,6 +63,14 @@ export default function Navbar() {
             </Link>
             {user ? (
               <>
+                <Link to="/messages" className="relative text-sm font-medium text-white/80 hover:text-white transition-colors">
+                  Messages
+                  {unread > 0 && (
+                    <span className="absolute -top-2 -right-4 min-w-4 h-4 px-1 rounded-full bg-[#52b788] text-[#0a1f15] text-[10px] font-bold flex items-center justify-center">
+                      {unread}
+                    </span>
+                  )}
+                </Link>
                 <span className="text-sm text-white/60 max-w-[8rem] truncate" title={user.email}>@{username}</span>
                 <button
                   onClick={handleSignOut}
@@ -111,6 +121,20 @@ export default function Navbar() {
                 {label}
               </Link>
             ))}
+            {user && (
+              <Link
+                to="/messages"
+                onClick={() => setOpen(false)}
+                className="px-4 py-3 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-2"
+              >
+                Messages
+                {unread > 0 && (
+                  <span className="min-w-5 h-5 px-1.5 rounded-full bg-[#52b788] text-[#0a1f15] text-xs font-bold flex items-center justify-center">
+                    {unread}
+                  </span>
+                )}
+              </Link>
+            )}
             {user ? (
               <button
                 onClick={handleSignOut}

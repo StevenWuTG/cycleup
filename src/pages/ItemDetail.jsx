@@ -144,13 +144,26 @@ export default function ItemDetail() {
                 <p className="text-xs text-[#a0785a] text-center">This is your listing</p>
               </div>
             ) : (
-              <>
-                <button className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold py-3.5 rounded-xl transition-colors mt-auto">
+              listing.user_id ? (
+                <Link
+                  to={`/messages/new/${listing.id}`}
+                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold py-3.5 rounded-xl transition-colors mt-auto"
+                >
                   <MessageCircle size={17} />
                   Contact Seller
-                </button>
-                <p className="text-xs text-[#a0785a] text-center mt-2">Messaging coming soon</p>
-              </>
+                </Link>
+              ) : (
+                <>
+                  <button
+                    disabled
+                    className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] text-white font-semibold py-3.5 rounded-xl opacity-50 cursor-not-allowed mt-auto"
+                  >
+                    <MessageCircle size={17} />
+                    Contact Seller
+                  </button>
+                  <p className="text-xs text-[#a0785a] text-center mt-2">Demo listing — no seller account to message</p>
+                </>
+              )
             )}
           </div>
         </div>

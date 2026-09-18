@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { CheckCircle, KeyRound, Mail } from "lucide-react";
 import { AuthCard, FormError, PrimaryButton } from "../components/AuthCard";
 import { useAuth } from "../context/auth-context";
@@ -18,7 +18,11 @@ const KINDS = {
 
 export default function ConfirmEmail() {
   const [params] = useSearchParams();
+  const { hash } = useLocation();
   const tokenHash = params.get("token_hash");
+  // If the link was already used, or opened by a mail scanner, Supabase sends people
+  // here with the reason in the #fragment (e.g. #error_code=otp_expired) and no token.
+  const linkError = new URLSearchParams(hash.replace(/^#/, "")).get("error_code");
   const kind = KINDS[params.get("type")];
   const { verifyEmailToken } = useAuth();
   const navigate = useNavigate();
@@ -26,6 +30,19 @@ export default function ConfirmEmail() {
   const [error, setError]     = useState("");
   const [done, setDone]       = useState(false);
   usePageTitle(kind?.title ?? "Confirm your email");
+
+  if (linkError && !tokenHash) {
+    return (
+      <AuthCard title="This link has expired" subtitle="Email links only work once, and only for a limited time.">
+        <p className="text-sm text-[#6b7280]">
+          <Link to="/forgot-password" className="font-semibold text-[#2d6a4f] hover:underline">Send a new password-reset link</Link>
+          {" · "}
+          <Link to="/login" className="font-semibold text-[#2d6a4f] hover:underline">Sign in</Link>
+          {" "}(you can resend a confirmation email from there).
+        </p>
+      </AuthCard>
+    );
+  }
 
   if (!tokenHash || !kind) {
     return (

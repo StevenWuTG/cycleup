@@ -81,7 +81,12 @@ function ProfileView({ profile }) {
               <p className="text-white/60 text-sm mt-1">
                 Member since {since} · {loading ? "…" : `${mine.length} ${mine.length === 1 ? "listing" : "listings"}`}
               </p>
-              {isOwn && <p className="text-white/40 text-xs mt-0.5 truncate">Signed in as {user.email}</p>}
+              {isOwn && (
+                <p className="text-white/40 text-xs mt-0.5 truncate">
+                  Signed in as {user.email} ·{" "}
+                  <Link to="/account" className="text-white/70 hover:text-white underline underline-offset-2">Account settings</Link>
+                </p>
+              )}
             </div>
           </div>
 

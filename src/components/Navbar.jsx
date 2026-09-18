@@ -138,6 +138,15 @@ export default function Navbar() {
                 My profile <span className="text-white/40">(@{username})</span>
               </Link>
             )}
+            {user && (
+              <Link
+                to="/account"
+                onClick={() => setOpen(false)}
+                className="px-4 py-3 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                Account settings
+              </Link>
+            )}
             {user ? (
               <button
                 onClick={handleSignOut}

@@ -24,6 +24,10 @@ const NewMessage   = lazy(() => import("./pages/NewMessage"));
 const Privacy      = lazy(() => import("./pages/Privacy"));
 const Terms        = lazy(() => import("./pages/Terms"));
 const NotFound     = lazy(() => import("./pages/NotFound"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword  = lazy(() => import("./pages/ResetPassword"));
+const ConfirmEmail   = lazy(() => import("./pages/ConfirmEmail"));
+const Account        = lazy(() => import("./pages/Account"));
 const MyProfile    = lazy(() => import("./pages/Profile").then(m => ({ default: m.MyProfile })));
 const UserProfile  = lazy(() => import("./pages/Profile").then(m => ({ default: m.UserProfile })));
 
@@ -61,6 +65,10 @@ function AppRoutes() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/auth/confirm" element={<ConfirmEmail />} />
+          <Route path="/account" element={<RequireAuth><Account /></RequireAuth>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

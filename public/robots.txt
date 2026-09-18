@@ -7,4 +7,8 @@ Disallow: /signup
 Disallow: /post
 Disallow: /profile
 Disallow: /messages
+Disallow: /account
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /auth/
 Disallow: /item/*/edit

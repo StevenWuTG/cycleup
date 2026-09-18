@@ -95,6 +95,10 @@ export default function Privacy() {
             and photos are stored there.
           </li>
           <li>
+            <strong>{SITE.emailProvider}</strong> sends the emails about your account (confirming your address, resetting a password,
+            confirming an email change). It sees your email address and the contents of those emails.
+          </li>
+          <li>
             <strong>Our website host</strong> delivers the site to your browser and keeps standard server logs, which include IP addresses.
           </li>
           <li>

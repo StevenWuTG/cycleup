@@ -8,7 +8,7 @@ const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
 
 export default function Auth({ mode }) {
   const isSignUp = mode === "signup";
-  const { user, loading, signIn, signUp } = useAuth();
+  const { user, loading, signIn, signUp, resendConfirmation } = useAuth();
   const location = useLocation();
   const from = location.state?.from ?? "/marketplace";
 
@@ -17,6 +17,8 @@ export default function Auth({ mode }) {
   const [submitError, setSubmitError] = useState("");
   const [submitting, setSubmitting]   = useState(false);
   const [confirmEmail, setConfirmEmail] = useState(false);
+  const [unconfirmed, setUnconfirmed]   = useState(false);
+  const [resend, setResend]             = useState({ status: "idle", message: "" });
   usePageTitle(isSignUp ? "Create an account" : "Sign in");
 
   if (!loading && user) return <Navigate to={from} replace />;
@@ -51,6 +53,8 @@ export default function Auth({ mode }) {
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setSubmitting(true);
     setSubmitError("");
+    setUnconfirmed(false);
+    setResend({ status: "idle", message: "" });
     try {
       const email = form.email.trim();
       if (isSignUp) {
@@ -62,10 +66,36 @@ export default function Auth({ mode }) {
       // On success the user state updates and the redirect above takes over.
     } catch (err) {
       setSubmitError(err.message || "Something went wrong. Please try again.");
+      setUnconfirmed(err.code === "email_not_confirmed");
     } finally {
       setSubmitting(false);
     }
   }
+
+  async function handleResend() {
+    setResend({ status: "sending", message: "" });
+    try {
+      await resendConfirmation(form.email.trim());
+      setResend({ status: "sent", message: "Sent! Check your inbox, and your spam folder." });
+    } catch (err) {
+      setResend({ status: "error", message: err.message });
+    }
+  }
+
+  // "Send it again" for the confirmation email, used on both screens below.
+  const resendControl = (
+    <div className="text-sm">
+      <button
+        type="button" onClick={handleResend} disabled={resend.status === "sending"}
+        className="font-semibold text-[#2d6a4f] hover:underline disabled:opacity-60"
+      >
+        {resend.status === "sending" ? "Sending…" : "Resend the confirmation email"}
+      </button>
+      {resend.message && (
+        <p role="status" className={`mt-1.5 ${resend.status === "error" ? "text-red-500" : "text-[#2d6a4f]"}`}>{resend.message}</p>
+      )}
+    </div>
+  );
 
   const shell = children => (
     <div className="min-h-screen bg-[#f8f4ed] flex items-center justify-center px-4 py-12" style={{ fontFamily: "'Inter Variable', system-ui, sans-serif" }}>
@@ -85,11 +115,14 @@ export default function Auth({ mode }) {
       </h1>
       <p className="text-[#6b7280] mb-6">
         We sent a confirmation link to <span className="font-semibold text-[#2d6a4f]">{form.email.trim()}</span>.
-        Click it, then sign in.
+        Click it to confirm your account, then sign in.
       </p>
-      <Link to="/login" state={{ from }} className="text-sm font-semibold text-[#2d6a4f] hover:underline">
-        Go to sign in
-      </Link>
+      <div className="space-y-3">
+        {resendControl}
+        <Link to="/login" state={{ from }} className="block text-sm font-semibold text-[#2d6a4f] hover:underline">
+          Go to sign in
+        </Link>
+      </div>
     </div>
   );
 
@@ -138,11 +171,17 @@ export default function Auth({ mode }) {
             className={inputClass(errors.password)}
           />
           {errors.password && <p className="text-red-500 text-xs mt-1.5">{errors.password}</p>}
+          {!isSignUp && (
+            <div className="text-right mt-2">
+              <Link to="/forgot-password" className="text-xs font-semibold text-[#2d6a4f] hover:underline">Forgot password?</Link>
+            </div>
+          )}
         </div>
 
         {submitError && (
-          <p className="text-red-500 text-sm bg-red-50 border border-red-200 rounded-xl px-4 py-3">{submitError}</p>
+          <p role="alert" className="text-red-500 text-sm bg-red-50 border border-red-200 rounded-xl px-4 py-3">{submitError}</p>
         )}
+        {unconfirmed && resendControl}
 
         <button
           type="submit" disabled={submitting}

@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Search, SlidersHorizontal, X, Leaf } from "lucide-react";
 import ListingCard from "../components/ListingCard";
-import { categories } from "../data/mockListings";
+import { categories } from "../data/categories";
 import { useListings } from "../context/listings-context";
 
 const sortOptions = ["Newest", "Price: Low to High", "Price: High to Low"];
 
 export default function Marketplace() {
-  const { listings } = useListings();
+  const { listings, loading, error } = useListings();
   const [search, setSearch]             = useState("");
   const [activeCategory, setCategory]   = useState("All");
   const [sort, setSort]                 = useState("Newest");
@@ -38,7 +38,7 @@ export default function Marketplace() {
           >
             Find something unique
           </h1>
-          <p className="text-white/60 text-base mt-2">{listings.length} upcycled items from independent makers</p>
+          <p className="text-white/60 text-base mt-2">{loading ? "Upcycled items" : `${listings.length} upcycled items`} from independent makers</p>
         </div>
       </div>
 
@@ -99,7 +99,14 @@ export default function Marketplace() {
         </p>
 
         {/* Grid */}
-        {filtered.length > 0 ? (
+        {loading ? (
+          <p className="text-sm text-[#8d8073] py-20 text-center">Loading listings…</p>
+        ) : error ? (
+          <div className="bg-white rounded-3xl border border-red-200 py-16 text-center">
+            <h3 className="text-lg font-semibold text-[#1a2e1e] mb-1">Couldn't load listings</h3>
+            <p className="text-sm text-red-500">{error}</p>
+          </div>
+        ) : filtered.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {filtered.map(listing => (
               <ListingCard key={listing.id} listing={listing} />

@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 import { MapPin } from "lucide-react";
-import ImagePlaceholder from "./ImagePlaceholder";
-import { tagColors } from "../data/mockListings";
+import ListingImage from "./ListingImage";
+import { tagColors } from "../data/categories";
 
 export default function ListingCard({ listing }) {
   return (
     <article className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 border border-[#e8e0d5] flex flex-col group">
       <Link to={`/item/${listing.id}`} className="overflow-hidden">
         <div className="group-hover:scale-105 transition-transform duration-300">
-          <ImagePlaceholder title={listing.title} id={listing.id} />
+          <ListingImage listing={listing} />
         </div>
       </Link>
 

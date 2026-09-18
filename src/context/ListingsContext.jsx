@@ -1,38 +1,55 @@
 import { useEffect, useState } from "react";
-import { mockListings } from "../data/mockListings";
+import { supabase } from "../lib/supabaseClient";
 import { ListingsContext } from "./listings-context";
 
-const STORAGE_KEY = "cycleup:listings";
+const IMAGE_BUCKET = "listing-images";
 
-function loadInitialListings() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch {
-    // corrupt or inaccessible storage — fall back to the mock catalog
-  }
-  return mockListings;
+async function uploadImage(file) {
+  const ext = file.name.split(".").pop().toLowerCase();
+  const path = `${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage
+    .from(IMAGE_BUCKET)
+    .upload(path, file, { contentType: file.type });
+  if (error) throw error;
+  return supabase.storage.from(IMAGE_BUCKET).getPublicUrl(path).data.publicUrl;
 }
 
 export function ListingsProvider({ children }) {
-  const [listings, setListings] = useState(loadInitialListings);
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(listings));
-    } catch {
-      // storage full or unavailable — listings still work for this session
-    }
-  }, [listings]);
+    let cancelled = false;
+    supabase
+      .from("listings")
+      .select("*")
+      .order("id", { ascending: false })
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) setError(error.message);
+        else setListings(data);
+        setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
-  function addListing(data) {
-    const listing = { id: Date.now(), ...data };
-    setListings(prev => [listing, ...prev]);
-    return listing;
+  // Uploads the optional photo first, then inserts the row. Throws on failure
+  // so the caller can surface the error and keep the form intact.
+  async function addListing({ imageFile, ...data }) {
+    const image_url = imageFile ? await uploadImage(imageFile) : null;
+    const { data: row, error } = await supabase
+      .from("listings")
+      .insert({ ...data, image_url })
+      .select()
+      .single();
+    if (error) throw error;
+    setListings(prev => [row, ...prev]);
+    return row;
   }
 
   return (
-    <ListingsContext.Provider value={{ listings, addListing }}>
+    <ListingsContext.Provider value={{ listings, loading, error, addListing }}>
       {children}
     </ListingsContext.Provider>
   );

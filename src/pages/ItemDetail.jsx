@@ -1,13 +1,21 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, MapPin, Leaf, MessageCircle } from "lucide-react";
 import { useListings } from "../context/listings-context";
-import ImagePlaceholder from "../components/ImagePlaceholder";
-import { tagColors } from "../data/mockListings";
+import ListingImage from "../components/ListingImage";
+import { tagColors } from "../data/categories";
 
 export default function ItemDetail() {
   const { id } = useParams();
-  const { listings } = useListings();
+  const { listings, loading } = useListings();
   const listing = listings.find(l => String(l.id) === id);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#f8f4ed] flex items-center justify-center text-sm text-[#8d8073]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+        Loading item…
+      </div>
+    );
+  }
 
   if (!listing) {
     return (
@@ -39,7 +47,7 @@ export default function ItemDetail() {
           {/* Image */}
           <div className="lg:col-span-3">
             <div className="rounded-3xl overflow-hidden shadow-sm border border-[#e8e0d5]">
-              <ImagePlaceholder title={listing.title} id={listing.id} className="h-80 sm:h-[28rem]" />
+              <ListingImage listing={listing} className="h-80 sm:h-[28rem]" />
             </div>
           </div>
 

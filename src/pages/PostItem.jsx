@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Leaf, CheckCircle, Upload, Tag, DollarSign, AlignLeft, Type, MapPin } from "lucide-react";
-import { categories } from "../data/mockListings";
+import { Leaf, CheckCircle, Upload, Tag, DollarSign, AlignLeft, Type, MapPin, X } from "lucide-react";
+import { categories } from "../data/categories";
 import { useListings } from "../context/listings-context";
 
 const itemCategories = categories.filter(c => c !== "All");
+
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
 const initialForm = {
   title: "", description: "", price: "",
@@ -30,6 +32,11 @@ export default function PostItem() {
   const [form, setForm]           = useState(initialForm);
   const [createdListing, setDone] = useState(null);
   const [errors, setErrors]       = useState({});
+  const [imageFile, setImageFile] = useState(null);
+  const [preview, setPreview]     = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const fileInput = useRef(null);
 
   const inputClass = err =>
     `w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788] transition bg-white text-[#1a2e1e] placeholder:text-[#c4a882] ${
@@ -50,6 +57,30 @@ export default function PostItem() {
     if (errors.category) setErrors(p => ({ ...p, category: "" }));
   }
 
+  function clearImage() {
+    if (preview) URL.revokeObjectURL(preview);
+    setImageFile(null);
+    setPreview(null);
+    if (fileInput.current) fileInput.current.value = "";
+  }
+
+  function handleImage(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setErrors(p => ({ ...p, image: "Please choose an image file (PNG, JPG, WebP)." }));
+    } else if (file.size > MAX_IMAGE_BYTES) {
+      setErrors(p => ({ ...p, image: "Image must be 5MB or smaller." }));
+    } else {
+      if (preview) URL.revokeObjectURL(preview);
+      setImageFile(file);
+      setPreview(URL.createObjectURL(file));
+      setErrors(p => ({ ...p, image: "" }));
+      return;
+    }
+    e.target.value = "";
+  }
+
   function validate() {
     const e = {};
     if (!form.title.trim())                              e.title       = "Title is required.";
@@ -60,21 +91,31 @@ export default function PostItem() {
     return e;
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
-    const listing = addListing({
-      title: form.title.trim(),
-      description: form.description.trim(),
-      price: Number(form.price),
-      category: form.category,
-      condition: form.condition,
-      location: form.location.trim(),
-      story: form.story.trim(),
-      seller: "You",
-    });
-    setDone(listing);
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      const listing = await addListing({
+        imageFile,
+        title: form.title.trim(),
+        description: form.description.trim(),
+        price: Number(form.price),
+        category: form.category,
+        condition: form.condition,
+        location: form.location.trim(),
+        story: form.story.trim(),
+        seller: "You",
+      });
+      setDone(listing);
+      clearImage();
+    } catch (err) {
+      setSubmitError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (createdListing) return (
@@ -140,15 +181,33 @@ export default function PostItem() {
           <form onSubmit={handleSubmit} noValidate className="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-[#e8e0d5] p-6 sm:p-8 space-y-6">
 
             {/* Image upload */}
-            <div className="border-2 border-dashed border-[#d8f3dc] rounded-2xl p-8 text-center hover:border-[#52b788] hover:bg-[#f0faf3] transition-colors cursor-pointer">
-              <div className="w-12 h-12 bg-[#d8f3dc] rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <Upload size={20} className="text-[#2d6a4f]" />
-              </div>
-              <p className="font-semibold text-[#2d6a4f] text-sm mb-1">Upload Photos</p>
-              <p className="text-xs text-[#a0785a]">PNG, JPG up to 10MB · Up to 5 photos</p>
-              <span className="inline-block mt-3 text-xs bg-[#d8f3dc] text-[#2d6a4f] font-medium px-3 py-1 rounded-full">
-                Coming soon
-              </span>
+            <div>
+              <input
+                ref={fileInput} type="file" accept="image/*" onChange={handleImage} className="hidden"
+              />
+              {preview ? (
+                <div className="relative rounded-2xl overflow-hidden border border-[#e8e0d5]">
+                  <img src={preview} alt="Selected item preview" className="w-full h-64 object-cover" />
+                  <button
+                    type="button" onClick={clearImage} aria-label="Remove photo"
+                    className="absolute top-3 right-3 bg-white/90 hover:bg-white text-[#1a2e1e] rounded-full p-1.5 shadow"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button" onClick={() => fileInput.current.click()}
+                  className="w-full border-2 border-dashed border-[#d8f3dc] rounded-2xl p-8 text-center hover:border-[#52b788] hover:bg-[#f0faf3] transition-colors"
+                >
+                  <div className="w-12 h-12 bg-[#d8f3dc] rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <Upload size={20} className="text-[#2d6a4f]" />
+                  </div>
+                  <p className="font-semibold text-[#2d6a4f] text-sm mb-1">Upload a photo</p>
+                  <p className="text-xs text-[#a0785a]">PNG, JPG or WebP up to 5MB</p>
+                </button>
+              )}
+              {errors.image && <p className="text-red-500 text-xs mt-1.5">{errors.image}</p>}
             </div>
 
             {/* Title */}
@@ -234,12 +293,16 @@ export default function PostItem() {
               />
             </Field>
 
+            {submitError && (
+              <p className="text-red-500 text-sm bg-red-50 border border-red-200 rounded-xl px-4 py-3">{submitError}</p>
+            )}
+
             <button
-              type="submit"
-              className="w-full bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-bold py-4 rounded-xl transition-all text-base shadow-sm hover:shadow-md flex items-center justify-center gap-2"
+              type="submit" disabled={submitting}
+              className="w-full bg-[#2d6a4f] hover:bg-[#1b4332] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all text-base shadow-sm hover:shadow-md flex items-center justify-center gap-2"
             >
               <Leaf size={18} />
-              Publish Listing
+              {submitting ? "Publishing…" : "Publish Listing"}
             </button>
           </form>
 

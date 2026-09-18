@@ -2,9 +2,12 @@ import { useState } from "react";
 import { Search, SlidersHorizontal, X, Leaf } from "lucide-react";
 import ListingCard from "../components/ListingCard";
 import { categories } from "../data/categories";
+
+const filterableCategories = categories.filter(c => c !== "All");
 import { useListings } from "../context/listings-context";
 import { useUserLocation } from "../context/location-context";
 import LocationControl from "../components/LocationControl";
+import CategoryFilter from "../components/CategoryFilter";
 
 const NEAREST = "Distance: Nearest";
 const baseSortOptions = ["Newest", "Price: Low to High", "Price: High to Low"];
@@ -28,6 +31,12 @@ export default function Marketplace() {
     if (da == null) return 1;
     if (db == null) return -1;
     return da - db;
+  }
+
+  // How many listings each category has, for ranking the pills and labelling "More".
+  const categoryCounts = {};
+  for (const listing of listings) {
+    for (const cat of listing.category) categoryCounts[cat] = (categoryCounts[cat] ?? 0) + 1;
   }
 
   const filtered = listings
@@ -96,26 +105,18 @@ export default function Marketplace() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Category pills */}
-        <div className="flex gap-2 flex-wrap mb-6">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-                activeCategory === cat
-                  ? "bg-[#1b4332] text-white shadow-sm"
-                  : "bg-white text-[#6b7280] border border-[#ddd6cc] hover:border-[#52b788] hover:text-[#2d6a4f]"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        {/* Category filter */}
+        <CategoryFilter
+          categories={filterableCategories}
+          counts={categoryCounts}
+          value={activeCategory}
+          onChange={setCategory}
+          ready={!loading}
+        />
 
         {/* Count */}
         <p className="text-sm text-[#8d8073] mb-6">
-          <span className="font-semibold text-[#1a2e1e]">{filtered.length}</span> items
+          <span className="font-semibold text-[#1a2e1e]">{filtered.length}</span> {filtered.length === 1 ? "item" : "items"}
           {activeCategory !== "All" && <> in <span className="font-semibold text-[#2d6a4f]">{activeCategory}</span></>}
           {search && <> matching "<span className="font-semibold text-[#2d6a4f]">{search}</span>"</>}
         </p>

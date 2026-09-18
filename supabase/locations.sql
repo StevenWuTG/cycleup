@@ -8,11 +8,17 @@ alter table public.listings
   add column if not exists latitude double precision,
   add column if not exists longitude double precision;
 
--- Either both are set and valid, or neither is.
+-- Either both are set and valid, or neither is. Both branches spell out their
+-- null checks on purpose: a CHECK passes when it evaluates to NULL, so without
+-- "is not null" a lone latitude (longitude null) would slip through.
 alter table public.listings drop constraint if exists listings_coordinates_valid;
 alter table public.listings add constraint listings_coordinates_valid check (
   (latitude is null and longitude is null)
-  or (latitude between -90 and 90 and longitude between -180 and 180)
+  or (
+    latitude is not null and longitude is not null
+    and latitude between -90 and 90
+    and longitude between -180 and 180
+  )
 );
 
 -- Give the demo listings coordinates for their cities.

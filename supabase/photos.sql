@@ -26,11 +26,14 @@ alter table public.listings drop constraint if exists listings_image_count;
 alter table public.listings
   add constraint listings_image_count check (cardinality(image_urls) <= 5);
 
--- Every photo must live in the listing owner's own folder of our storage
--- bucket. Without this a seller could point a listing at any web address on the
--- internet, and use it to see who views their listing. (Triggers on one table
--- fire in name order, so listings_set_owner has already filled in user_id when
--- this runs on insert.)
+-- Every photo must be a public storage address on supabase.co, inside the
+-- listing owner's own folder of our bucket, and nothing else. The whole URL is
+-- matched (anchored at both ends) so text can't be smuggled into a query string:
+-- without that, a seller could point a listing at their own server and use the
+-- image as a tracking pixel to see who views it. (The built site's
+-- Content-Security-Policy additionally limits images to this project's own
+-- Supabase host.) Triggers on one table fire in name order, so
+-- listings_set_owner has already filled in user_id when this runs on insert.
 create or replace function public.validate_listing_images()
 returns trigger
 language plpgsql
@@ -40,7 +43,10 @@ declare
 begin
   foreach photo in array new.image_urls loop
     if new.user_id is null
-       or position('/storage/v1/object/public/listing-images/' || new.user_id::text || '/' in photo) = 0 then
+       or photo !~ (
+         '^https://[a-z0-9-]+\.supabase\.co/storage/v1/object/public/listing-images/'
+         || new.user_id::text || '/[A-Za-z0-9._-]+$'
+       ) then
       raise exception 'Photos must be uploaded through CycleUp.';
     end if;
   end loop;

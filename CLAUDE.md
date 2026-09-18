@@ -13,7 +13,7 @@ CycleUp — a marketplace for upcycled/repurposed goods, connecting independent 
 - `npm run preview` — preview the production build locally
 - `npm run lint` — run ESLint
 
-No test suite is configured.
+No test suite is configured. To test anything that needs two signed-in users (messaging), run a second dev server on another port (`npm run dev -- --port 5174`): Supabase sessions live in `localStorage`, which is per-origin, so each port keeps its own login. Don't use `127.0.0.1` for this — Vite binds only to IPv6 `localhost`, so `127.0.0.1` refuses connections. Test rows can't be cleaned up from the client (conversations/messages have no delete policy); remove them in the SQL Editor, e.g. `delete from public.conversations where listing_title like 'TEST%';` (messages cascade).
 
 ## Setup
 

@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Leaf, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "../context/auth-context";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -11,6 +12,12 @@ const navLinks = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
+  const { user, username, signOut } = useAuth();
+
+  function handleSignOut() {
+    setOpen(false);
+    signOut().catch(err => console.error("Sign out failed:", err.message));
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-[#1b4332]/95 backdrop-blur-md border-b border-white/10">
@@ -52,6 +59,21 @@ export default function Navbar() {
             >
               Browse
             </Link>
+            {user ? (
+              <>
+                <span className="text-sm text-white/60 max-w-[8rem] truncate" title={user.email}>@{username}</span>
+                <button
+                  onClick={handleSignOut}
+                  className="text-sm font-medium text-white/80 hover:text-white transition-colors"
+                >
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <Link to="/login" className="text-sm font-medium text-white/80 hover:text-white transition-colors">
+                Sign in
+              </Link>
+            )}
             <Link
               to="/post"
               className="bg-[#52b788] hover:bg-[#74c69d] text-[#1b4332] font-semibold text-sm px-5 py-2 rounded-full transition-all shadow-sm hover:shadow-md"
@@ -89,6 +111,22 @@ export default function Navbar() {
                 {label}
               </Link>
             ))}
+            {user ? (
+              <button
+                onClick={handleSignOut}
+                className="text-left px-4 py-3 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                Sign out <span className="text-white/40">(@{username})</span>
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setOpen(false)}
+                className="px-4 py-3 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                Sign in
+              </Link>
+            )}
             <div className="pt-2 pb-1">
               <Link
                 to="/post"

@@ -107,7 +107,6 @@ export default function PostItem() {
         condition: form.condition,
         location: form.location.trim(),
         story: form.story.trim(),
-        seller: "You",
       });
       setDone(listing);
       clearImage();

@@ -1,13 +1,33 @@
-import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, MapPin, Leaf, MessageCircle } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, MapPin, Leaf, MessageCircle, Trash2 } from "lucide-react";
 import { useListings } from "../context/listings-context";
+import { useAuth } from "../context/auth-context";
 import ListingImage from "../components/ListingImage";
 import { tagColors } from "../data/categories";
 
 export default function ItemDetail() {
   const { id } = useParams();
-  const { listings, loading } = useListings();
+  const { listings, loading, deleteListing } = useListings();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
   const listing = listings.find(l => String(l.id) === id);
+  const isOwner = !!user && !!listing && listing.user_id === user.id;
+
+  async function handleDelete() {
+    if (!window.confirm(`Delete "${listing.title}"? This can't be undone.`)) return;
+    setDeleting(true);
+    setDeleteError("");
+    try {
+      await deleteListing(listing);
+      navigate("/marketplace");
+    } catch (err) {
+      setDeleteError(err.message || "Couldn't delete this listing.");
+      setDeleting(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -104,11 +124,27 @@ export default function ItemDetail() {
               </div>
             )}
 
-            <button className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold py-3.5 rounded-xl transition-colors mt-auto">
-              <MessageCircle size={17} />
-              Contact Seller
-            </button>
-            <p className="text-xs text-[#a0785a] text-center mt-2">Messaging coming soon</p>
+            {isOwner ? (
+              <div className="mt-auto">
+                <button
+                  onClick={handleDelete} disabled={deleting}
+                  className="w-full flex items-center justify-center gap-2 border-2 border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed font-semibold py-3 rounded-xl transition-colors"
+                >
+                  <Trash2 size={16} />
+                  {deleting ? "Deleting…" : "Delete listing"}
+                </button>
+                {deleteError && <p className="text-xs text-red-500 text-center mt-2">{deleteError}</p>}
+                <p className="text-xs text-[#a0785a] text-center mt-2">This is your listing</p>
+              </div>
+            ) : (
+              <>
+                <button className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold py-3.5 rounded-xl transition-colors mt-auto">
+                  <MessageCircle size={17} />
+                  Contact Seller
+                </button>
+                <p className="text-xs text-[#a0785a] text-center mt-2">Messaging coming soon</p>
+              </>
+            )}
           </div>
         </div>
       </div>

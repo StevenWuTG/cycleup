@@ -5,7 +5,7 @@ import ListingForm from "../components/ListingForm";
 import { useListings } from "../context/listings-context";
 import { useAuth } from "../context/auth-context";
 
-const fontStyle = { fontFamily: "'Inter', system-ui, sans-serif" };
+const fontStyle = { fontFamily: "'Inter Variable', system-ui, sans-serif" };
 
 function Message({ title, body, children }) {
   return (
@@ -63,7 +63,7 @@ export default function EditItem() {
             <ArrowLeft size={15} />
             Back to listing
           </Link>
-          <h1 style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-4xl lg:text-5xl font-bold text-white">
+          <h1 style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-4xl lg:text-5xl font-bold text-white">
             Edit your item
           </h1>
         </div>

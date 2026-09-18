@@ -4,11 +4,11 @@ import { SITE } from "../config/site";
 
 export function LegalPage({ title, children }) {
   return (
-    <div className="min-h-screen bg-[#f8f4ed]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#f8f4ed]" style={{ fontFamily: "'Inter Variable', system-ui, sans-serif" }}>
       <div className="bg-gradient-to-br from-[#1b4332] to-[#2d6a4f]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
           <p className="text-[#74c69d] text-sm font-semibold uppercase tracking-widest mb-2">Legal</p>
-          <h1 style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-4xl lg:text-5xl font-bold text-white">
+          <h1 style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-4xl lg:text-5xl font-bold text-white">
             {title}
           </h1>
           <p className="text-white/60 text-sm mt-3">Last updated {SITE.legalUpdated}</p>
@@ -27,7 +27,7 @@ export function LegalPage({ title, children }) {
 export function Section({ title, children }) {
   return (
     <section className="mt-10 first:mt-0">
-      <h2 style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-xl sm:text-2xl font-bold text-[#1b4332] mb-3">
+      <h2 style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-xl sm:text-2xl font-bold text-[#1b4332] mb-3">
         {title}
       </h2>
       <div className="space-y-3">{children}</div>

@@ -7,12 +7,12 @@ export default function NotFound() {
   return (
     <div
       className="min-h-[70vh] bg-[#f8f4ed] flex items-center justify-center px-4 py-20 text-center"
-      style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+      style={{ fontFamily: "'Inter Variable', system-ui, sans-serif" }}
     >
       <div className="max-w-md">
         <Leaf size={44} className="text-[#d8f3dc] mx-auto mb-4" />
         <p className="text-sm font-semibold text-[#52b788] uppercase tracking-widest mb-2">Error 404</p>
-        <h1 style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-4xl font-bold text-[#1b4332] mb-3">
+        <h1 style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-4xl font-bold text-[#1b4332] mb-3">
           We couldn't find that page
         </h1>
         <p className="text-[#6b7280] mb-8">

@@ -58,14 +58,14 @@ export default function Marketplace() {
     );
 
   return (
-    <div className="min-h-screen bg-[#f8f4ed]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#f8f4ed]" style={{ fontFamily: "'Inter Variable', system-ui, sans-serif" }}>
 
       {/* Page header */}
       <div className="bg-gradient-to-br from-[#1b4332] to-[#2d6a4f]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20">
           <p className="text-[#74c69d] text-sm font-semibold uppercase tracking-widest mb-2">The Marketplace</p>
           <h1
-            style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+            style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }}
             className="text-4xl lg:text-5xl font-bold text-white mb-1"
           >
             Find something unique

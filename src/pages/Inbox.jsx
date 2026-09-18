@@ -24,10 +24,10 @@ export default function Inbox() {
   }, [user.id, unread]);
 
   return (
-    <div className="min-h-screen bg-[#f8f4ed]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#f8f4ed]" style={{ fontFamily: "'Inter Variable', system-ui, sans-serif" }}>
       <div className="bg-gradient-to-br from-[#1b4332] to-[#2d6a4f]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
-          <h1 style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-4xl lg:text-5xl font-bold text-white">
+          <h1 style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-4xl lg:text-5xl font-bold text-white">
             Messages
           </h1>
         </div>

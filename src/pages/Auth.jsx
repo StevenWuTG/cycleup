@@ -68,7 +68,7 @@ export default function Auth({ mode }) {
   }
 
   const shell = children => (
-    <div className="min-h-screen bg-[#f8f4ed] flex items-center justify-center px-4 py-12" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#f8f4ed] flex items-center justify-center px-4 py-12" style={{ fontFamily: "'Inter Variable', system-ui, sans-serif" }}>
       <div className="bg-white rounded-3xl shadow-lg border border-[#e8e0d5] p-8 sm:p-10 max-w-md w-full">
         {children}
       </div>
@@ -80,7 +80,7 @@ export default function Auth({ mode }) {
       <div className="w-16 h-16 bg-[#d8f3dc] rounded-full flex items-center justify-center mx-auto mb-5">
         <Mail size={30} className="text-[#52b788]" />
       </div>
-      <h1 style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-3xl font-bold text-[#1b4332] mb-2">
+      <h1 style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-3xl font-bold text-[#1b4332] mb-2">
         Check your email
       </h1>
       <p className="text-[#6b7280] mb-6">
@@ -98,7 +98,7 @@ export default function Auth({ mode }) {
       <div className="w-12 h-12 bg-[#d8f3dc] rounded-2xl flex items-center justify-center mb-5">
         <Leaf size={22} className="text-[#2d6a4f]" />
       </div>
-      <h1 style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-3xl font-bold text-[#1b4332] mb-1">
+      <h1 style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-3xl font-bold text-[#1b4332] mb-1">
         {isSignUp ? "Join CycleUp" : "Welcome back"}
       </h1>
       <p className="text-[#6b7280] text-sm mb-6">

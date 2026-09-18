@@ -30,12 +30,12 @@ export default class ErrorBoundary extends Component {
     return (
       <div
         className="min-h-[70vh] bg-[#f8f4ed] flex items-center justify-center px-4 py-20 text-center"
-        style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+        style={{ fontFamily: "'Inter Variable', system-ui, sans-serif" }}
         role="alert"
       >
         <div className="max-w-md">
           <Leaf size={44} className="text-[#d8f3dc] mx-auto mb-4" />
-          <h1 style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-3xl font-bold text-[#1b4332] mb-2">
+          <h1 style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-3xl font-bold text-[#1b4332] mb-2">
             Something went wrong
           </h1>
           <p className="text-[#6b7280] mb-6">

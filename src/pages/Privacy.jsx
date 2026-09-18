@@ -102,10 +102,6 @@ export default function Privacy() {
             sent from your browser to Open-Meteo, along with your IP address, so it can suggest matching places. We don't send your
             name, email or account details.
           </li>
-          <li>
-            <strong>Google Fonts</strong> supplies the site's typefaces, so your browser contacts Google when a page loads, which shares
-            your IP address and browser details with Google.
-          </li>
         </List>
         <P>
           We won't share your personal information with anyone else unless the law requires it, it's needed to protect someone's safety

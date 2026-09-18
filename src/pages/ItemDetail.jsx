@@ -37,7 +37,7 @@ export default function ItemDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8f4ed] flex items-center justify-center text-sm text-[#8d8073]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#f8f4ed] flex items-center justify-center text-sm text-[#8d8073]" style={{ fontFamily: "'Inter Variable', system-ui, sans-serif" }}>
         Loading item…
       </div>
     );
@@ -45,7 +45,7 @@ export default function ItemDetail() {
 
   if (!listing) {
     return (
-      <div className="min-h-screen bg-[#f8f4ed] flex items-center justify-center px-4 py-20 text-center" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div className="min-h-screen bg-[#f8f4ed] flex items-center justify-center px-4 py-20 text-center" style={{ fontFamily: "'Inter Variable', system-ui, sans-serif" }}>
         <div>
           <Leaf size={40} className="text-[#d8f3dc] mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-[#1a2e1e] mb-2">Item not found</h1>
@@ -59,7 +59,7 @@ export default function ItemDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f4ed]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-[#f8f4ed]" style={{ fontFamily: "'Inter Variable', system-ui, sans-serif" }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link
           to="/marketplace"
@@ -94,7 +94,7 @@ export default function ItemDetail() {
             </div>
 
             <h1
-              style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+              style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }}
               className="text-3xl sm:text-4xl font-bold text-[#1a2e1e] mb-2 leading-tight"
             >
               {listing.title}

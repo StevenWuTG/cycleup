@@ -31,7 +31,7 @@ export default function Navbar() {
             <div className="w-8 h-8 bg-[#52b788] rounded-lg flex items-center justify-center">
               <Leaf size={16} className="text-[#1b4332]" strokeWidth={2.5} />
             </div>
-            <span style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-white text-xl font-bold tracking-tight">
+            <span style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-white text-xl font-bold tracking-tight">
               Cycle<span className="text-[#74c69d]">Up</span>
             </span>
           </Link>

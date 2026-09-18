@@ -31,7 +31,7 @@ function PageLoading() {
   return (
     <div
       className="min-h-[70vh] bg-[#f8f4ed] flex items-center justify-center text-sm text-[#8d8073]"
-      style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+      style={{ fontFamily: "'Inter Variable', system-ui, sans-serif" }}
       role="status"
     >
       Loading…

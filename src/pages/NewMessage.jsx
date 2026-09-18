@@ -7,7 +7,7 @@ import { useAuth } from "../context/auth-context";
 import { useListings } from "../context/listings-context";
 import { findConversation, startConversation } from "../lib/messages";
 
-const fontStyle = { fontFamily: "'Inter', system-ui, sans-serif" };
+const fontStyle = { fontFamily: "'Inter Variable', system-ui, sans-serif" };
 
 function Message({ title, body, to, linkText }) {
   return (

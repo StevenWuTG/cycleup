@@ -8,7 +8,7 @@ import { formatWhen } from "../lib/format";
 import { useAuth } from "../context/auth-context";
 import { useMessages } from "../context/messages-context";
 
-const fontStyle = { fontFamily: "'Inter', system-ui, sans-serif" };
+const fontStyle = { fontFamily: "'Inter Variable', system-ui, sans-serif" };
 
 // Merge by id so a message that arrives both from our own send and from the
 // realtime feed (or before the initial fetch finishes) is only shown once.
@@ -120,7 +120,7 @@ function Thread({ id }) {
         </Link>
 
         <div className="bg-white rounded-2xl border border-[#e8e0d5] px-5 py-4 mb-4">
-          <div style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-xl font-bold text-[#1b4332]">@{otherName}</div>
+          <div style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-xl font-bold text-[#1b4332]">@{otherName}</div>
           <div className="text-sm text-[#8d8073]">
             about{" "}
             {conversation.listing_id ? (

@@ -70,7 +70,7 @@ const recentItems = [
 
 export default function Landing() {
   return (
-    <div className="min-h-screen" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="min-h-screen" style={{ fontFamily: "'Inter Variable', system-ui, sans-serif" }}>
 
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-[#0a1f15] via-[#1b4332] to-[#2d6a4f]">
@@ -88,7 +88,7 @@ export default function Landing() {
                 Sustainable Shopping, Reimagined
               </div>
               <h1
-                style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+                style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }}
                 className="text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-[1.05] tracking-tight mb-6"
               >
                 One Person's Trash Is{" "}
@@ -160,7 +160,7 @@ export default function Landing() {
           <div className="text-center mb-10">
             <p className="text-sm font-semibold text-[#52b788] uppercase tracking-widest mb-3">How it works</p>
             <h2
-              style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+              style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }}
               className="text-3xl lg:text-4xl font-bold text-[#1b4332]"
             >
               From workshop to new home
@@ -187,7 +187,7 @@ export default function Landing() {
           <div className="text-center mb-14">
             <p className="text-sm font-semibold text-[#52b788] uppercase tracking-widest mb-3">Why CycleUp</p>
             <h2
-              style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+              style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }}
               className="text-4xl lg:text-5xl font-bold text-[#1b4332] mb-4"
             >
               Good for the planet.<br />Great for your home.
@@ -219,7 +219,7 @@ export default function Landing() {
           <div className="text-center mb-12">
             <p className="text-sm font-semibold text-[#74c69d] uppercase tracking-widest mb-3">Who it's for</p>
             <h2
-              style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+              style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }}
               className="text-4xl font-bold text-white"
             >
               Made for makers and shoppers
@@ -231,7 +231,7 @@ export default function Landing() {
                 <div className="w-11 h-11 rounded-2xl bg-[#2d6a4f] flex items-center justify-center text-[#74c69d] mb-4">
                   {a.icon}
                 </div>
-                <h3 style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-2xl font-bold text-white mb-4">
+                <h3 style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-2xl font-bold text-white mb-4">
                   {a.title}
                 </h3>
                 <ul className="space-y-3 mb-7">
@@ -264,7 +264,7 @@ export default function Landing() {
             <div className="relative">
               <Leaf size={44} className="text-[#74c69d] mx-auto mb-4" />
               <h2
-                style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+                style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }}
                 className="text-4xl lg:text-5xl font-bold text-white mb-4"
               >
                 Ready to close the loop?

@@ -20,8 +20,8 @@
   --color-cream: #f8f4ed;
   --color-bark:  #6b4c3b;
 
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body:    'Inter', system-ui, sans-serif;
+  --font-display: 'Fraunces Variable', Georgia, serif;
+  --font-body:    'Inter Variable', system-ui, sans-serif;
 }
 
 /* No global margin/padding reset here: Tailwind's preflight already resets

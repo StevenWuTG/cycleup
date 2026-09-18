@@ -7,7 +7,7 @@ import { useAuth } from "../context/auth-context";
 import { useListings } from "../context/listings-context";
 import { fetchProfileById, fetchProfileByUsername } from "../lib/profiles";
 
-const fontStyle = { fontFamily: "'Inter', system-ui, sans-serif" };
+const fontStyle = { fontFamily: "'Inter Variable', system-ui, sans-serif" };
 
 // Loads a profile by user id or by username. Loading is derived (the stored
 // result belongs to a different lookup) so switching between profiles never
@@ -65,7 +65,7 @@ function ProfileView({ profile }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
           <div className="flex items-center gap-5 min-w-0">
             <div
-              style={{ fontFamily: "'Fraunces', Georgia, serif" }}
+              style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }}
               className="w-20 h-20 shrink-0 rounded-full bg-[#52b788] text-[#0a1f15] flex items-center justify-center text-4xl font-bold"
               aria-hidden="true"
             >
@@ -75,7 +75,7 @@ function ProfileView({ profile }) {
               <p className="text-[#74c69d] text-sm font-semibold uppercase tracking-widest mb-1">
                 {isOwn ? "Your profile" : "Seller"}
               </p>
-              <h1 style={{ fontFamily: "'Fraunces', Georgia, serif" }} className="text-3xl sm:text-4xl font-bold text-white truncate">
+              <h1 style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-3xl sm:text-4xl font-bold text-white truncate">
                 @{profile.username}
               </h1>
               <p className="text-white/60 text-sm mt-1">

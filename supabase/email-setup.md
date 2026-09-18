@@ -52,7 +52,14 @@ Save. (`noreply@` does not need a mailbox: it is only ever a sending address.)
 ## 5. Use the CycleUp email templates
 
 Supabase → **Authentication → Emails → Templates**. For each template set the **Subject** and paste the file's contents
-into the **Message body** (HTML) box:
+into the **Message body** (HTML) box. **Replace the whole box** (click in it, **Cmd+A**, then paste). If you paste
+*after* Supabase's default text, every email contains the default message above ours, and the default's one-click link
+is the kind mail scanners use up. Two things we hit when setting this up:
+
+- The **Confirm sign up** and **Change email address** templates would not save until **Confirm email** was turned on
+  (step 6). If a template won't save, turn that on first, then retry.
+- Check **SMTP Settings → Sender name** says `CycleUp`; ours first showed a personal name in the inbox.
+
 
 | Supabase template | Subject | File |
 | --- | --- | --- |

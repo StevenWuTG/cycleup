@@ -5,6 +5,7 @@ import { AuthContext } from "./auth-context";
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -18,7 +19,24 @@ export function AuthProvider({ children }) {
   }, []);
 
   const user = session?.user ?? null;
-  const username = user ? user.user_metadata?.username ?? user.email : null;
+  const userId = user?.id;
+
+  // The profiles table is the source of truth for the username (it's what the
+  // database stamps on listings). Accounts created outside the signup form get
+  // a generated name there, so don't rely on signup metadata.
+  useEffect(() => {
+    if (!userId) return;
+    let cancelled = false;
+    supabase.from("profiles").select("username").eq("id", userId).maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data) setProfile({ id: userId, username: data.username });
+      });
+    return () => { cancelled = true; };
+  }, [userId]);
+
+  const username = !user ? null
+    : profile?.id === user.id ? profile.username
+    : user.user_metadata?.username ?? user.email;
 
   async function signUp({ email, password, username }) {
     const { data: taken } = await supabase

@@ -104,7 +104,13 @@ export default function ItemDetail() {
                 <span className="font-semibold text-[#2d6a4f]">· {formatDistance(miles)} away</span>
               )}
               <span className="mx-1 text-[#c4a882]">·</span>
-              <span className="text-[#a0785a] font-medium">{listing.seller}</span>
+              {listing.user_id ? (
+                <Link to={`/u/${listing.seller}`} className="text-[#a0785a] font-medium hover:text-[#2d6a4f] hover:underline">
+                  {listing.seller}
+                </Link>
+              ) : (
+                <span className="text-[#a0785a] font-medium">{listing.seller}</span>
+              )}
             </div>
 
             {listing.condition && (

@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Inbox from "./pages/Inbox";
 import Conversation from "./pages/Conversation";
 import NewMessage from "./pages/NewMessage";
+import { MyProfile, UserProfile } from "./pages/Profile";
 import RequireAuth from "./components/RequireAuth";
 import { AuthProvider } from "./context/AuthContext";
 import { ListingsProvider } from "./context/ListingsContext";
@@ -30,7 +31,9 @@ export default function App() {
                 <Route path="/post" element={<RequireAuth><PostItem /></RequireAuth>} />
                 <Route path="/item/:id" element={<ItemDetail />} />
                 <Route path="/item/:id/edit" element={<RequireAuth><EditItem /></RequireAuth>} />
-                <Route path="/messages" element={<RequireAuth><Inbox /></RequireAuth>} />
+                <Route path="/profile" element={<RequireAuth><MyProfile /></RequireAuth>} />
+              <Route path="/u/:username" element={<UserProfile />} />
+              <Route path="/messages" element={<RequireAuth><Inbox /></RequireAuth>} />
                 <Route path="/messages/new/:listingId" element={<RequireAuth><NewMessage /></RequireAuth>} />
                 <Route path="/messages/:id" element={<RequireAuth><Conversation /></RequireAuth>} />
                 <Route path="/login" element={<Auth mode="login" />} />

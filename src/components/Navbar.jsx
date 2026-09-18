@@ -65,7 +65,7 @@ export default function Navbar() {
                     </span>
                   )}
                 </Link>
-                <span className="text-sm text-white/60 max-w-[8rem] truncate" title={user.email}>@{username}</span>
+                <Link to="/profile" className="text-sm text-white/70 hover:text-white transition-colors max-w-[8rem] truncate" title="Your profile">@{username}</Link>
                 <button
                   onClick={handleSignOut}
                   className="text-sm font-medium text-white/80 hover:text-white transition-colors"
@@ -129,12 +129,21 @@ export default function Navbar() {
                 )}
               </Link>
             )}
+            {user && (
+              <Link
+                to="/profile"
+                onClick={() => setOpen(false)}
+                className="px-4 py-3 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                My profile <span className="text-white/40">(@{username})</span>
+              </Link>
+            )}
             {user ? (
               <button
                 onClick={handleSignOut}
                 className="text-left px-4 py-3 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors"
               >
-                Sign out <span className="text-white/40">(@{username})</span>
+                Sign out
               </button>
             ) : (
               <Link

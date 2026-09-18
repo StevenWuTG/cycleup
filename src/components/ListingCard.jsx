@@ -34,7 +34,13 @@ export default function ListingCard({ listing }) {
               <span className="mx-1 text-[#c4a882]">·</span>
             </>
           )}
-          <span className="text-[#a0785a] font-medium truncate">{listing.seller}</span>
+          {listing.user_id ? (
+            <Link to={`/u/${listing.seller}`} className="text-[#a0785a] font-medium truncate hover:text-[#2d6a4f] hover:underline">
+              {listing.seller}
+            </Link>
+          ) : (
+            <span className="text-[#a0785a] font-medium truncate">{listing.seller}</span>
+          )}
           {miles != null && (
             <span className="ml-auto pl-2 shrink-0 font-semibold text-[#2d6a4f]">{formatDistance(miles)}</span>
           )}

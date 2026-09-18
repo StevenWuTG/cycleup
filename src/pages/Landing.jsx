@@ -290,22 +290,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
-      {/* ── Footer ───────────────────────────────────────── */}
-      <footer className="bg-[#0a1f15] text-white/60 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
-          <div className="flex items-center gap-2 font-semibold text-white">
-            <Leaf size={15} className="text-[#52b788]" />
-            CycleUp
-          </div>
-          <p>© {new Date().getFullYear()} CycleUp. Building a circular economy together.</p>
-          <div className="flex gap-4 text-white/50">
-            <a href="#" className="hover:text-white transition-colors">About</a>
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

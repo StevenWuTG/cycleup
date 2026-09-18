@@ -148,6 +148,14 @@ export default function Auth({ mode }) {
         >
           {submitting ? "Please wait…" : isSignUp ? "Create account" : "Sign in"}
         </button>
+        {isSignUp && (
+          <p className="text-xs text-[#8d8073] text-center leading-relaxed">
+            By creating an account you agree to our{" "}
+            <Link to="/terms" target="_blank" className="font-medium text-[#2d6a4f] underline underline-offset-2">Terms</Link>{" "}
+            and{" "}
+            <Link to="/privacy" target="_blank" className="font-medium text-[#2d6a4f] underline underline-offset-2">Privacy Policy</Link>.
+          </p>
+        )}
       </form>
 
       <p className="text-sm text-[#6b7280] text-center mt-6">

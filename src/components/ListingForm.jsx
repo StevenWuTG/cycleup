@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Leaf, Upload, Tag, DollarSign, AlignLeft, Type, MapPin, X, ImagePlus } from "lucide-react";
 import { categories } from "../data/categories";
 import LocationPicker from "./LocationPicker";
+import { prepareImage } from "../lib/image";
 
 const itemCategories = categories.filter(c => c !== "All");
 
@@ -96,21 +97,30 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
     }
   }
 
-  function handleImage(e) {
-    const file = e.target.files[0];
+  async function handleImage(e) {
+    const input = e.target;
+    const file = input.files[0];
     if (!file) return;
+
+    let problem = "";
     if (!file.type.startsWith("image/")) {
-      setErrors(p => ({ ...p, image: "Please choose an image file (PNG, JPG, WebP)." }));
+      problem = "Please choose an image file (PNG, JPG, WebP).";
     } else if (file.size > MAX_IMAGE_BYTES) {
-      setErrors(p => ({ ...p, image: "Image must be 5MB or smaller." }));
+      problem = "Image must be 5MB or smaller.";
     } else {
-      setImageFile(file);
-      setPreview(URL.createObjectURL(file));
-      setRemoveExisting(false);
-      setErrors(p => ({ ...p, image: "" }));
-      return;
+      try {
+        // Strips hidden metadata (like GPS) before the photo ever leaves the browser.
+        const clean = await prepareImage(file);
+        setImageFile(clean);
+        setPreview(URL.createObjectURL(clean));
+        setRemoveExisting(false);
+        setErrors(p => ({ ...p, image: "" }));
+      } catch {
+        problem = "We couldn't read that photo. Try a JPEG or PNG.";
+      }
     }
-    e.target.value = "";
+    if (problem) setErrors(p => ({ ...p, image: problem }));
+    input.value = "";
   }
 
   function validate() {

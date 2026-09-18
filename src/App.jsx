@@ -10,6 +10,9 @@ import Inbox from "./pages/Inbox";
 import Conversation from "./pages/Conversation";
 import NewMessage from "./pages/NewMessage";
 import { MyProfile, UserProfile } from "./pages/Profile";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Footer from "./components/Footer";
 import RequireAuth from "./components/RequireAuth";
 import { AuthProvider } from "./context/AuthContext";
 import { ListingsProvider } from "./context/ListingsContext";
@@ -36,9 +39,12 @@ export default function App() {
               <Route path="/messages" element={<RequireAuth><Inbox /></RequireAuth>} />
                 <Route path="/messages/new/:listingId" element={<RequireAuth><NewMessage /></RequireAuth>} />
                 <Route path="/messages/:id" element={<RequireAuth><Conversation /></RequireAuth>} />
-                <Route path="/login" element={<Auth mode="login" />} />
+                <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/login" element={<Auth mode="login" />} />
                 <Route path="/signup" element={<Auth mode="signup" />} />
               </Routes>
+            <Footer />
             </BrowserRouter>
           </MessagesProvider>
         </ListingsProvider>

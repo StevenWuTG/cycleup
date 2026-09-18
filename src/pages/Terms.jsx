@@ -1,3 +1,4 @@
+import { usePageTitle } from "../lib/usePageTitle";
 import { Link } from "react-router-dom";
 import { Callout, EmailLink, LegalPage, List, P, Section } from "../components/LegalPage";
 import { SITE } from "../config/site";
@@ -5,6 +6,7 @@ import { SITE } from "../config/site";
 // Keep this in step with what the app really does (there are no payments, for
 // example). If that changes, update this page and bump SITE.legalUpdated.
 export default function Terms() {
+  usePageTitle("Terms of Service");
   return (
     <LegalPage title="Terms of Service">
       <Callout title="The short version">

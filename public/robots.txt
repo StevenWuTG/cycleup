@@ -1,0 +1,10 @@
+# Public pages (marketplace, listings, seller pages, legal pages) may be indexed.
+# Account and private pages have nothing worth indexing.
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /signup
+Disallow: /post
+Disallow: /profile
+Disallow: /messages
+Disallow: /item/*/edit

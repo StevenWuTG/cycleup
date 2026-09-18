@@ -1,3 +1,4 @@
+import { usePageTitle } from "../lib/usePageTitle";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
@@ -5,6 +6,7 @@ import ListingForm from "../components/ListingForm";
 import { useListings } from "../context/listings-context";
 
 export default function PostItem() {
+  usePageTitle("Post an item");
   const { addListing }            = useListings();
   const [createdListing, setDone] = useState(null);
 

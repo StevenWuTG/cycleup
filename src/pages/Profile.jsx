@@ -1,3 +1,4 @@
+import { usePageTitle } from "../lib/usePageTitle";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Leaf, Pencil, Plus, Trash2 } from "lucide-react";
@@ -35,6 +36,7 @@ function Centered({ children }) {
 }
 
 function ProfileView({ profile }) {
+  usePageTitle(`@${profile.username}`);
   const { user } = useAuth();
   const { listings, loading, deleteListing } = useListings();
   const [deletingId, setDeletingId] = useState(null);
@@ -162,6 +164,7 @@ export function MyProfile() {
 export function UserProfile() {
   const { username } = useParams();
   const { loading, profile, error } = useProfile("username", username);
+  usePageTitle(!loading && !profile && !error ? "Profile not found" : null);
 
   if (error) return <Centered><p className="text-sm text-red-500">{error}</p></Centered>;
   if (loading) return <Centered><p className="text-sm text-[#8d8073]">Loading profile…</p></Centered>;

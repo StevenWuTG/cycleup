@@ -1,3 +1,4 @@
+import { usePageTitle } from "../lib/usePageTitle";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Leaf, Send } from "lucide-react";
@@ -27,6 +28,7 @@ function Thread({ id }) {
   const [sending, setSending]   = useState(false);
   const [sendError, setSendError] = useState("");
   const bottomRef = useRef(null);
+  usePageTitle("Messages");
 
   const addMessages = useCallback(list => setMessages(prev => mergeMessages(prev, list)), []);
 

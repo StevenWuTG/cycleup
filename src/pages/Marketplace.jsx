@@ -1,3 +1,4 @@
+import { usePageTitle } from "../lib/usePageTitle";
 import { useState } from "react";
 import { Search, SlidersHorizontal, X, Leaf } from "lucide-react";
 import ListingCard from "../components/ListingCard";
@@ -13,6 +14,7 @@ const NEAREST = "Distance: Nearest";
 const baseSortOptions = ["Newest", "Price: Low to High", "Price: High to Low"];
 
 export default function Marketplace() {
+  usePageTitle("Marketplace");
   const { listings, loading, error } = useListings();
   const { place, distanceTo } = useUserLocation();
   const [search, setSearch]             = useState("");
@@ -80,12 +82,13 @@ export default function Marketplace() {
             <input
               type="text"
               placeholder="Search items, sellers or places…"
+              aria-label="Search items, sellers or places"
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-10 pr-9 py-2.5 bg-[#faf6f0] border border-[#e8e0d5] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788] focus:bg-white transition text-[#1a2e1e] placeholder:text-[#a0785a]/70"
             />
             {search && (
-              <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a0785a] hover:text-[#6b4c3b]">
+              <button onClick={() => setSearch("")} aria-label="Clear search" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a0785a] hover:text-[#6b4c3b]">
                 <X size={14} />
               </button>
             )}
@@ -94,6 +97,7 @@ export default function Marketplace() {
           <div className="flex items-center gap-2 shrink-0">
             <SlidersHorizontal size={15} className="text-[#a0785a]" />
             <select
+              aria-label="Sort listings"
               value={activeSort}
               onChange={e => setSort(e.target.value)}
               className="bg-[#faf6f0] border border-[#e8e0d5] rounded-xl text-sm py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-[#52b788] text-[#1a2e1e] cursor-pointer"

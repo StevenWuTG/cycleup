@@ -1,3 +1,4 @@
+import { usePageTitle } from "../lib/usePageTitle";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Leaf, Send } from "lucide-react";
@@ -25,6 +26,7 @@ function Message({ title, body, to, linkText }) {
 // this listing they're sent straight to it; otherwise they write the first
 // message here, and the conversation is created when it's sent.
 export default function NewMessage() {
+  usePageTitle("Message the seller");
   const { listingId } = useParams();
   const { listings, loading } = useListings();
   const { user } = useAuth();

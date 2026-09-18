@@ -1,3 +1,4 @@
+import { usePageTitle } from "../lib/usePageTitle";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Leaf } from "lucide-react";
 import ListingForm from "../components/ListingForm";
@@ -25,6 +26,7 @@ export default function EditItem() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const listing = listings.find(l => String(l.id) === id);
+  usePageTitle("Edit listing");
 
   if (loading) {
     return <div className="min-h-screen bg-[#f8f4ed] flex items-center justify-center text-sm text-[#8d8073]" style={fontStyle}>Loading item…</div>;

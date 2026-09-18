@@ -1,3 +1,4 @@
+import { usePageTitle } from "../lib/usePageTitle";
 import { Link } from "react-router-dom";
 import { Callout, EmailLink, LegalPage, List, P, Section } from "../components/LegalPage";
 import { SITE } from "../config/site";
@@ -6,6 +7,7 @@ import { SITE } from "../config/site";
 // third-party service, payments, or change what is stored, update this page and
 // bump SITE.legalUpdated.
 export default function Privacy() {
+  usePageTitle("Privacy Policy");
   return (
     <LegalPage title="Privacy Policy">
       <Callout title="The short version">

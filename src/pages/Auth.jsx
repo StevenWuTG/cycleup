@@ -1,3 +1,4 @@
+import { usePageTitle } from "../lib/usePageTitle";
 import { useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { Leaf, Mail } from "lucide-react";
@@ -16,6 +17,7 @@ export default function Auth({ mode }) {
   const [submitError, setSubmitError] = useState("");
   const [submitting, setSubmitting]   = useState(false);
   const [confirmEmail, setConfirmEmail] = useState(false);
+  usePageTitle(isSignUp ? "Create an account" : "Sign in");
 
   if (!loading && user) return <Navigate to={from} replace />;
 

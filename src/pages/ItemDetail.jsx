@@ -1,3 +1,4 @@
+import { usePageTitle } from "../lib/usePageTitle";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, MapPin, Leaf, MessageCircle, Pencil, Trash2 } from "lucide-react";
@@ -17,6 +18,7 @@ export default function ItemDetail() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
   const listing = listings.find(l => String(l.id) === id);
+  usePageTitle(listing?.title ?? (loading ? null : "Item not found"));
   const isOwner = !!user && !!listing && listing.user_id === user.id;
   const miles = listing ? distanceTo(listing) : null;
 

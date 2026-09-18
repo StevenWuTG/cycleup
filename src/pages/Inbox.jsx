@@ -1,3 +1,4 @@
+import { usePageTitle } from "../lib/usePageTitle";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Leaf, MessageCircle } from "lucide-react";
@@ -7,6 +8,7 @@ import { fetchInbox } from "../lib/messages";
 import { formatWhen } from "../lib/format";
 
 export default function Inbox() {
+  usePageTitle("Messages");
   const { user } = useAuth();
   const { unread } = useMessages();
   const [items, setItems] = useState(null);

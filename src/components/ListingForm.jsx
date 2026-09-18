@@ -32,19 +32,38 @@ function placeFromListing(listing) {
   return { label: listing.location, latitude: listing.latitude ?? null, longitude: listing.longitude ?? null };
 }
 
-function Field({ label, required, icon, error, children }) {
+// `htmlFor` ties the label to its input (so clicking the label focuses it and
+// screen readers announce it). A field made of several buttons has no single
+// input, so it gets a plain heading and the caller wraps the buttons in a group.
+function Field({ label, htmlFor, required, icon, error, children }) {
+  const labelClass = "flex items-center gap-1.5 text-sm font-semibold text-[#1a2e1e] mb-2";
+  const content = (
+    <>
+      {icon}
+      {label}
+      {required && <span className="text-red-400 ml-0.5" aria-hidden="true">*</span>}
+    </>
+  );
   return (
     <div>
-      <label className="flex items-center gap-1.5 text-sm font-semibold text-[#1a2e1e] mb-2">
-        {icon}
-        {label}
-        {required && <span className="text-red-400 ml-0.5">*</span>}
-      </label>
+      {htmlFor
+        ? <label htmlFor={htmlFor} className={labelClass}>{content}</label>
+        : <div className={labelClass}>{content}</div>}
       {children}
-      {error && <p className="text-red-500 text-xs mt-1.5">{error}</p>}
+      {error && (
+        <p id={htmlFor ? `${htmlFor}-error` : undefined} role="alert" className="text-red-500 text-xs mt-1.5">{error}</p>
+      )}
     </div>
   );
 }
+
+// aria attributes for a text-like input: required, and invalid + linked to its error message.
+const fieldAria = (id, error) => ({
+  id,
+  "aria-required": "true",
+  "aria-invalid": error ? "true" : undefined,
+  "aria-describedby": error ? `${id}-error` : undefined,
+});
 
 const inputClass = err =>
   `w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788] transition bg-white text-[#1a2e1e] placeholder:text-[#c4a882] ${
@@ -246,18 +265,18 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
       </div>
 
       {/* Title */}
-      <Field label="Item Title" required icon={<Type size={14} />} error={errors.title}>
+      <Field label="Item Title" htmlFor="title" required icon={<Type size={14} />} error={errors.title}>
         <input
-          type="text" name="title" value={form.title} onChange={handleChange}
+          type="text" name="title" value={form.title} onChange={handleChange} {...fieldAria("title", errors.title)}
           placeholder="e.g. Reclaimed Wood Shelf with Industrial Pipe"
           className={inputClass(errors.title)}
         />
       </Field>
 
       {/* Description */}
-      <Field label="Description" required icon={<AlignLeft size={14} />} error={errors.description}>
+      <Field label="Description" htmlFor="description" required icon={<AlignLeft size={14} />} error={errors.description}>
         <textarea
-          name="description" value={form.description} onChange={handleChange} rows={4}
+          name="description" value={form.description} onChange={handleChange} rows={4} {...fieldAria("description", errors.description)}
           placeholder="Materials used, dimensions, unique features, care instructions…"
           className={inputClass(errors.description) + " resize-none"}
         />
@@ -265,19 +284,19 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
 
       {/* Price + Condition */}
       <div className="grid sm:grid-cols-2 gap-4">
-        <Field label="Price (USD)" required icon={<DollarSign size={14} />} error={errors.price}>
+        <Field label="Price (USD)" htmlFor="price" required icon={<DollarSign size={14} />} error={errors.price}>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#a0785a] text-sm font-medium">$</span>
             <input
-              type="number" name="price" value={form.price} onChange={handleChange}
+              type="number" name="price" value={form.price} onChange={handleChange} {...fieldAria("price", errors.price)}
               placeholder="0.00" min="0" step="0.01"
               className={inputClass(errors.price) + " pl-8"}
             />
           </div>
         </Field>
-        <Field label="Condition" required error={errors.condition}>
+        <Field label="Condition" htmlFor="condition" required error={errors.condition}>
           <select
-            name="condition" value={form.condition} onChange={handleChange}
+            name="condition" value={form.condition} onChange={handleChange} {...fieldAria("condition", errors.condition)}
             className={inputClass(errors.condition) + " cursor-pointer"}
           >
             <option value="" disabled>Select condition…</option>
@@ -291,10 +310,10 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
 
       {/* Categories */}
       <Field label="Categories" required icon={<Tag size={14} />} error={errors.category}>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Categories">
           {itemCategories.map(cat => (
             <button
-              key={cat} type="button" onClick={() => toggleCat(cat)}
+              key={cat} type="button" onClick={() => toggleCat(cat)} aria-pressed={form.category.includes(cat)}
               className={`px-3.5 py-1.5 rounded-full text-sm font-medium border transition-all ${
                 form.category.includes(cat)
                   ? "bg-[#1b4332] text-white border-[#1b4332] shadow-sm"
@@ -308,7 +327,7 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
       </Field>
 
       {/* Location */}
-      <Field label="Location" icon={<MapPin size={14} />}>
+      <Field label="Location" htmlFor="location" icon={<MapPin size={14} />}>
         <LocationPicker
           id="location" value={place} onChange={setPlace} allowFreeText
           placeholder="Search for your city or ZIP code…"
@@ -326,9 +345,9 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
       </Field>
 
       {/* Story */}
-      <Field label="The Origin Story" icon={<Leaf size={14} />}>
+      <Field label="The Origin Story" htmlFor="story" icon={<Leaf size={14} />}>
         <textarea
-          name="story" value={form.story} onChange={handleChange} rows={3}
+          id="story" name="story" value={form.story} onChange={handleChange} rows={3}
           placeholder="What was this before? Where did the materials come from? Buyers love the backstory…"
           className={inputClass(false) + " resize-none"}
         />

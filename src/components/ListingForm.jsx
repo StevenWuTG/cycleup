@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Leaf, Upload, Tag, DollarSign, AlignLeft, Type, MapPin, X, ImagePlus } from "lucide-react";
 import { categories } from "../data/categories";
+import LocationPicker from "./LocationPicker";
 
 const itemCategories = categories.filter(c => c !== "All");
 
@@ -8,7 +9,7 @@ const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
 const emptyForm = {
   title: "", description: "", price: "",
-  category: [], condition: "", location: "", story: "",
+  category: [], condition: "", story: "",
 };
 
 function formFromListing(listing) {
@@ -19,9 +20,14 @@ function formFromListing(listing) {
     price: String(listing.price),
     category: listing.category,
     condition: listing.condition ?? "",
-    location: listing.location ?? "",
     story: listing.story ?? "",
   };
+}
+
+// Listings made before coordinates existed have a text label but no position.
+function placeFromListing(listing) {
+  if (!listing?.location) return null;
+  return { label: listing.location, latitude: listing.latitude ?? null, longitude: listing.longitude ?? null };
 }
 
 function Field({ label, required, icon, error, children }) {
@@ -50,6 +56,7 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
   const existingImageUrl = listing?.image_url ?? null;
 
   const [form, setForm]           = useState(() => formFromListing(listing));
+  const [place, setPlace]         = useState(() => placeFromListing(listing));
   const [errors, setErrors]       = useState({});
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview]     = useState(null);
@@ -130,7 +137,9 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
           price: Number(form.price),
           category: form.category,
           condition: form.condition,
-          location: form.location.trim(),
+          location: place?.label ?? "",
+          latitude: place?.latitude ?? null,
+          longitude: place?.longitude ?? null,
           story: form.story.trim(),
         },
         imageFile,
@@ -248,11 +257,20 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
 
       {/* Location */}
       <Field label="Location" icon={<MapPin size={14} />}>
-        <input
-          type="text" name="location" value={form.location} onChange={handleChange}
-          placeholder="City, State (e.g. Portland, OR)"
-          className={inputClass(false)}
+        <LocationPicker
+          id="location" value={place} onChange={setPlace} allowFreeText
+          placeholder="Search for your city or ZIP code…"
+          inputClassName={inputClass(false)}
         />
+        {place && place.latitude == null ? (
+          <p className="text-xs text-amber-700 mt-1.5">
+            Choose a suggestion from the list so buyers can sort by distance. Without one, your listing shows this text but no distance.
+          </p>
+        ) : (
+          <p className="text-xs text-[#a0785a] mt-1.5">
+            Buyers see your city and roughly how far away it is, never your street address.
+          </p>
+        )}
       </Field>
 
       {/* Story */}

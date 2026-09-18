@@ -3,26 +3,47 @@ import { Search, SlidersHorizontal, X, Leaf } from "lucide-react";
 import ListingCard from "../components/ListingCard";
 import { categories } from "../data/categories";
 import { useListings } from "../context/listings-context";
+import { useUserLocation } from "../context/location-context";
+import LocationControl from "../components/LocationControl";
 
-const sortOptions = ["Newest", "Price: Low to High", "Price: High to Low"];
+const NEAREST = "Distance: Nearest";
+const baseSortOptions = ["Newest", "Price: Low to High", "Price: High to Low"];
 
 export default function Marketplace() {
   const { listings, loading, error } = useListings();
+  const { place, distanceTo } = useUserLocation();
   const [search, setSearch]             = useState("");
   const [activeCategory, setCategory]   = useState("All");
   const [sort, setSort]                 = useState("Newest");
+
+  // Sorting by distance only makes sense with a location; if it's cleared
+  // while selected, fall back to Newest.
+  const sortOptions = place ? [NEAREST, ...baseSortOptions] : baseSortOptions;
+  const activeSort  = sort === NEAREST && !place ? "Newest" : sort;
+
+  // Nearest first; listings with no coordinates go last (newest first).
+  function byDistance(a, b) {
+    const da = distanceTo(a), db = distanceTo(b);
+    if (da == null && db == null) return b.id - a.id;
+    if (da == null) return 1;
+    if (db == null) return -1;
+    return da - db;
+  }
 
   const filtered = listings
     .filter(item => {
       const q = search.toLowerCase();
       return (
-        (item.title.toLowerCase().includes(q) || item.seller.toLowerCase().includes(q)) &&
+        (item.title.toLowerCase().includes(q) ||
+          item.seller.toLowerCase().includes(q) ||
+          (item.location ?? "").toLowerCase().includes(q)) &&
         (activeCategory === "All" || item.category.includes(activeCategory))
       );
     })
     .sort((a, b) =>
-      sort === "Price: Low to High"  ? a.price - b.price :
-      sort === "Price: High to Low"  ? b.price - a.price : b.id - a.id
+      activeSort === NEAREST              ? byDistance(a, b) :
+      activeSort === "Price: Low to High" ? a.price - b.price :
+      activeSort === "Price: High to Low" ? b.price - a.price : b.id - a.id
     );
 
   return (
@@ -49,7 +70,7 @@ export default function Marketplace() {
             <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#a0785a]" />
             <input
               type="text"
-              placeholder="Search items or sellers…"
+              placeholder="Search items, sellers or places…"
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-10 pr-9 py-2.5 bg-[#faf6f0] border border-[#e8e0d5] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#52b788] focus:bg-white transition text-[#1a2e1e] placeholder:text-[#a0785a]/70"
@@ -60,10 +81,11 @@ export default function Marketplace() {
               </button>
             )}
           </div>
+          <LocationControl onSet={() => setSort(NEAREST)} />
           <div className="flex items-center gap-2 shrink-0">
             <SlidersHorizontal size={15} className="text-[#a0785a]" />
             <select
-              value={sort}
+              value={activeSort}
               onChange={e => setSort(e.target.value)}
               className="bg-[#faf6f0] border border-[#e8e0d5] rounded-xl text-sm py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-[#52b788] text-[#1a2e1e] cursor-pointer"
             >

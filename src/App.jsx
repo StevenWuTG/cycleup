@@ -13,30 +13,33 @@ import RequireAuth from "./components/RequireAuth";
 import { AuthProvider } from "./context/AuthContext";
 import { ListingsProvider } from "./context/ListingsContext";
 import { MessagesProvider } from "./context/MessagesContext";
+import { LocationProvider } from "./context/LocationContext";
 import "./index.css";
 
 export default function App() {
   return (
-    <AuthProvider>
-      <ListingsProvider>
-        <MessagesProvider>
-          <BrowserRouter>
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/marketplace" element={<Marketplace />} />
-              <Route path="/post" element={<RequireAuth><PostItem /></RequireAuth>} />
-              <Route path="/item/:id" element={<ItemDetail />} />
-              <Route path="/item/:id/edit" element={<RequireAuth><EditItem /></RequireAuth>} />
-              <Route path="/messages" element={<RequireAuth><Inbox /></RequireAuth>} />
-              <Route path="/messages/new/:listingId" element={<RequireAuth><NewMessage /></RequireAuth>} />
-              <Route path="/messages/:id" element={<RequireAuth><Conversation /></RequireAuth>} />
-              <Route path="/login" element={<Auth mode="login" />} />
-              <Route path="/signup" element={<Auth mode="signup" />} />
-            </Routes>
-          </BrowserRouter>
-        </MessagesProvider>
-      </ListingsProvider>
-    </AuthProvider>
+    <LocationProvider>
+      <AuthProvider>
+        <ListingsProvider>
+          <MessagesProvider>
+            <BrowserRouter>
+              <Navbar />
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/marketplace" element={<Marketplace />} />
+                <Route path="/post" element={<RequireAuth><PostItem /></RequireAuth>} />
+                <Route path="/item/:id" element={<ItemDetail />} />
+                <Route path="/item/:id/edit" element={<RequireAuth><EditItem /></RequireAuth>} />
+                <Route path="/messages" element={<RequireAuth><Inbox /></RequireAuth>} />
+                <Route path="/messages/new/:listingId" element={<RequireAuth><NewMessage /></RequireAuth>} />
+                <Route path="/messages/:id" element={<RequireAuth><Conversation /></RequireAuth>} />
+                <Route path="/login" element={<Auth mode="login" />} />
+                <Route path="/signup" element={<Auth mode="signup" />} />
+              </Routes>
+            </BrowserRouter>
+          </MessagesProvider>
+        </ListingsProvider>
+      </AuthProvider>
+    </LocationProvider>
   );
 }

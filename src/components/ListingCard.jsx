@@ -2,8 +2,12 @@ import { Link } from "react-router-dom";
 import { MapPin } from "lucide-react";
 import ListingImage from "./ListingImage";
 import { tagColors } from "../data/categories";
+import { useUserLocation } from "../context/location-context";
+import { formatDistance } from "../lib/distance";
 
 export default function ListingCard({ listing }) {
+  const { distanceTo } = useUserLocation();
+  const miles = distanceTo(listing);
   return (
     <article className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 border border-[#e8e0d5] flex flex-col group">
       <Link to={`/item/${listing.id}`} className="overflow-hidden">
@@ -31,6 +35,9 @@ export default function ListingCard({ listing }) {
             </>
           )}
           <span className="text-[#a0785a] font-medium truncate">{listing.seller}</span>
+          {miles != null && (
+            <span className="ml-auto pl-2 shrink-0 font-semibold text-[#2d6a4f]">{formatDistance(miles)}</span>
+          )}
         </div>
 
         <div className="flex flex-wrap gap-1.5 mt-auto mb-4">

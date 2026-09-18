@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, MapPin, Leaf, MessageCircle, Pencil, Trash2 } from "lucide-react";
 import { useListings } from "../context/listings-context";
 import { useAuth } from "../context/auth-context";
+import { useUserLocation } from "../context/location-context";
+import { formatDistance } from "../lib/distance";
 import ListingImage from "../components/ListingImage";
 import { tagColors } from "../data/categories";
 
@@ -10,11 +12,13 @@ export default function ItemDetail() {
   const { id } = useParams();
   const { listings, loading, deleteListing } = useListings();
   const { user } = useAuth();
+  const { distanceTo } = useUserLocation();
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
   const listing = listings.find(l => String(l.id) === id);
   const isOwner = !!user && !!listing && listing.user_id === user.id;
+  const miles = listing ? distanceTo(listing) : null;
 
   async function handleDelete() {
     if (!window.confirm(`Delete "${listing.title}"? This can't be undone.`)) return;
@@ -96,6 +100,9 @@ export default function ItemDetail() {
             <div className="flex items-center gap-1 text-sm text-[#8d8073] mb-6">
               <MapPin size={13} className="shrink-0" />
               <span>{listing.location || "Location not specified"}</span>
+              {miles != null && (
+                <span className="font-semibold text-[#2d6a4f]">· {formatDistance(miles)} away</span>
+              )}
               <span className="mx-1 text-[#c4a882]">·</span>
               <span className="text-[#a0785a] font-medium">{listing.seller}</span>
             </div>

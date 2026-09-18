@@ -99,7 +99,7 @@ export default function Terms() {
       <Section title="8. Removing content and closing accounts">
         <P>
           We may, but aren't required to, review content, and we may remove any listing or message, or suspend or close any account, at
-          our discretion, for example if these Terms are broken or if something looks unsafe. To report a problem, email <EmailLink />.
+          our discretion, for example if these Terms are broken or if something looks unsafe. To report a problem, use the Report button on a listing, a seller's page or a conversation, or email <EmailLink />.
         </P>
       </Section>
 

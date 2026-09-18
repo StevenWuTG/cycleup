@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
     : profile?.id === user.id ? profile.username
     : user.user_metadata?.username ?? user.email;
 
-  async function signUp({ email, password, username }) {
+  async function signUp({ email, password, username, captchaToken }) {
     const { data: taken } = await supabase
       .from("profiles").select("id").eq("username", username).maybeSingle();
     if (taken) throw new Error("That username is already taken.");
@@ -58,7 +58,7 @@ export function AuthProvider({ children }) {
     const data = await run(supabase.auth.signUp({
       email,
       password,
-      options: { data: { username }, emailRedirectTo: confirmUrl() },
+      options: { data: { username }, emailRedirectTo: confirmUrl(), captchaToken },
     }));
     // With email confirmation on, an existing address comes back as a user
     // with no identities instead of an error.
@@ -69,8 +69,8 @@ export function AuthProvider({ children }) {
     return { needsConfirmation: !data.session };
   }
 
-  async function signIn({ email, password }) {
-    await run(supabase.auth.signInWithPassword({ email, password }));
+  async function signIn({ email, password, captchaToken }) {
+    await run(supabase.auth.signInWithPassword({ email, password, options: { captchaToken } }));
   }
 
   async function signOut() {
@@ -79,12 +79,12 @@ export function AuthProvider({ children }) {
 
   // Emails a password-reset link. Supabase gives the same answer whether or not
   // the address has an account, so this can't be used to discover who is registered.
-  async function sendPasswordReset(email) {
-    await run(supabase.auth.resetPasswordForEmail(email, { redirectTo: confirmUrl() }));
+  async function sendPasswordReset(email, captchaToken) {
+    await run(supabase.auth.resetPasswordForEmail(email, { redirectTo: confirmUrl(), captchaToken }));
   }
 
-  async function resendConfirmation(email) {
-    await run(supabase.auth.resend({ type: "signup", email, options: { emailRedirectTo: confirmUrl() } }));
+  async function resendConfirmation(email, captchaToken) {
+    await run(supabase.auth.resend({ type: "signup", email, options: { emailRedirectTo: confirmUrl(), captchaToken } }));
   }
 
   // Exchanges the one-time token from an email link for a signed-in session.

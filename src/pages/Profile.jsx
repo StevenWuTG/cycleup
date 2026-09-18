@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Leaf, Pencil, Plus, Trash2 } from "lucide-react";
 import ListingCard from "../components/ListingCard";
+import ReportButton from "../components/ReportButton";
 import { useAuth } from "../context/auth-context";
 import { useListings } from "../context/listings-context";
 import { fetchProfileById, fetchProfileByUsername } from "../lib/profiles";
@@ -81,6 +82,14 @@ function ProfileView({ profile }) {
               <p className="text-white/60 text-sm mt-1">
                 Member since {since} · {loading ? "…" : `${mine.length} ${mine.length === 1 ? "listing" : "listings"}`}
               </p>
+              {!isOwn && (
+                <div className="mt-2">
+                  <ReportButton
+                    label="Report this seller" heading={`Report @${profile.username}`} target={{ userId: profile.id }}
+                    className="text-white/50 hover:text-white"
+                  />
+                </div>
+              )}
               {isOwn && (
                 <p className="text-white/40 text-xs mt-0.5 truncate">
                   Signed in as {user.email} ·{" "}

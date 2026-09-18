@@ -5,6 +5,7 @@ import { ArrowLeft, Leaf, Send } from "lucide-react";
 import { supabase } from "../lib/supabaseClient";
 import { fetchThread, markConversationRead, sendMessage } from "../lib/messages";
 import { formatWhen } from "../lib/format";
+import ReportButton from "../components/ReportButton";
 import { useAuth } from "../context/auth-context";
 import { useMessages } from "../context/messages-context";
 
@@ -120,7 +121,13 @@ function Thread({ id }) {
         </Link>
 
         <div className="bg-white rounded-2xl border border-[#e8e0d5] px-5 py-4 mb-4">
-          <div style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-xl font-bold text-[#1b4332]">@{otherName}</div>
+          <div className="flex items-start justify-between gap-3">
+            <div style={{ fontFamily: "'Fraunces Variable', Georgia, serif" }} className="text-xl font-bold text-[#1b4332]">@{otherName}</div>
+            <ReportButton
+              label="Report" heading={`Report your conversation with @${otherName}`} target={{ conversationId: conversation.id }}
+              className="text-[#a0785a] hover:text-red-600 shrink-0 pt-1.5"
+            />
+          </div>
           <div className="text-sm text-[#8d8073]">
             about{" "}
             {conversation.listing_id ? (

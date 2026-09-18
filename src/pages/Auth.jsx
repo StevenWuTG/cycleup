@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { Leaf, Mail } from "lucide-react";
 import { useAuth } from "../context/auth-context";
+import Captcha from "../components/Captcha";
+import { useCaptcha } from "../lib/useCaptcha";
 
 const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
 
@@ -20,6 +22,7 @@ export default function Auth({ mode }) {
   const [unconfirmed, setUnconfirmed]   = useState(false);
   const [resend, setResend]             = useState({ status: "idle", message: "" });
   usePageTitle(isSignUp ? "Create an account" : "Sign in");
+  const captcha = useCaptcha();
 
   if (!loading && user) return <Navigate to={from} replace />;
 
@@ -51,6 +54,7 @@ export default function Auth({ mode }) {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
+    if (!captcha.ready) { setSubmitError("Please wait for the security check to finish."); return; }
     setSubmitting(true);
     setSubmitError("");
     setUnconfirmed(false);
@@ -58,10 +62,10 @@ export default function Auth({ mode }) {
     try {
       const email = form.email.trim();
       if (isSignUp) {
-        const { needsConfirmation } = await signUp({ email, password: form.password, username: form.username });
+        const { needsConfirmation } = await signUp({ email, password: form.password, username: form.username, captchaToken: captcha.token });
         if (needsConfirmation) setConfirmEmail(true);
       } else {
-        await signIn({ email, password: form.password });
+        await signIn({ email, password: form.password, captchaToken: captcha.token });
       }
       // On success the user state updates and the redirect above takes over.
     } catch (err) {
@@ -69,16 +73,20 @@ export default function Auth({ mode }) {
       setUnconfirmed(err.code === "email_not_confirmed");
     } finally {
       setSubmitting(false);
+      captcha.refresh(); // a security-check token works only once
     }
   }
 
   async function handleResend() {
+    if (!captcha.ready) { setResend({ status: "error", message: "Please wait for the security check to finish." }); return; }
     setResend({ status: "sending", message: "" });
     try {
-      await resendConfirmation(form.email.trim());
+      await resendConfirmation(form.email.trim(), captcha.token);
       setResend({ status: "sent", message: "Sent! Check your inbox, and your spam folder." });
     } catch (err) {
       setResend({ status: "error", message: err.message });
+    } finally {
+      captcha.refresh();
     }
   }
 
@@ -118,6 +126,7 @@ export default function Auth({ mode }) {
         Click it to confirm your account, then sign in.
       </p>
       <div className="space-y-3">
+        <Captcha onToken={captcha.setToken} resetKey={captcha.resetKey} />
         {resendControl}
         <Link to="/login" state={{ from }} className="block text-sm font-semibold text-[#2d6a4f] hover:underline">
           Go to sign in
@@ -183,8 +192,10 @@ export default function Auth({ mode }) {
         )}
         {unconfirmed && resendControl}
 
+        <Captcha onToken={captcha.setToken} resetKey={captcha.resetKey} />
+
         <button
-          type="submit" disabled={submitting}
+          type="submit" disabled={submitting || !captcha.ready}
           className="w-full bg-[#2d6a4f] hover:bg-[#1b4332] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl transition-colors"
         >
           {submitting ? "Please wait…" : isSignUp ? "Create account" : "Sign in"}

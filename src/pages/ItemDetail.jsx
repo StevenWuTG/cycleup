@@ -7,6 +7,7 @@ import { useAuth } from "../context/auth-context";
 import { useUserLocation } from "../context/location-context";
 import { formatDistance } from "../lib/distance";
 import PhotoGallery from "../components/PhotoGallery";
+import ReportButton from "../components/ReportButton";
 import { tagColors } from "../data/categories";
 
 export default function ItemDetail() {
@@ -182,6 +183,14 @@ export default function ItemDetail() {
                   <p className="text-xs text-[#a0785a] text-center mt-2">Sample listing — there's no seller account to message</p>
                 </>
               )
+            )}
+            {!isOwner && listing.user_id && (
+              <div className="text-center mt-4">
+                <ReportButton
+                  label="Report this listing" heading="Report this listing" target={{ listingId: listing.id }}
+                  className="text-[#a0785a] hover:text-red-600"
+                />
+              </div>
             )}
           </div>
         </div>

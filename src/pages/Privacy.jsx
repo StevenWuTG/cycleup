@@ -2,6 +2,7 @@ import { usePageTitle } from "../lib/usePageTitle";
 import { Link } from "react-router-dom";
 import { Callout, EmailLink, LegalPage, List, P, Section } from "../components/LegalPage";
 import { SITE } from "../config/site";
+import { captchaEnabled } from "../lib/captcha";
 
 // Keep this in step with what the app really does. If you add analytics, a new
 // third-party service, payments, or change what is stored, update this page and
@@ -49,6 +50,11 @@ export default function Privacy() {
             your permission first, and we round the result to roughly a kilometre.
           </li>
           <li>
+            <strong>Reports.</strong> If you report a listing, a person or a conversation, we store the report: which account made it,
+            what it's about, the reason you chose and anything you write. We use it to look into the problem, and we don't tell the
+            person you reported who made the report unless the law requires it.
+          </li>
+          <li>
             <strong>Technical information.</strong> Like nearly every website, our providers automatically receive your IP address,
             browser type and the requests your browser makes. This is used to run and secure the service.
           </li>
@@ -65,6 +71,7 @@ export default function Privacy() {
           <li><strong>Everyone, including people without an account:</strong> your username, the month you joined, and your listings (with photos, price, city and seller username).</li>
           <li><strong>Only you:</strong> your email address, your password, and the location you set as a shopper.</li>
           <li><strong>You and the other person:</strong> the messages in a conversation.</li>
+          <li><strong>Only us:</strong> reports that people have made.</li>
           <li>
             <strong>Us:</strong> as the operator we can technically access what is stored in our database, including messages. We only
             look when we need to run or secure the service, look into a report of abuse, or comply with the law.
@@ -101,6 +108,13 @@ export default function Privacy() {
           <li>
             <strong>Our website host</strong> delivers the site to your browser and keeps standard server logs, which include IP addresses.
           </li>
+          {captchaEnabled && (
+            <li>
+              <strong>Cloudflare Turnstile</strong> checks that you're a person and not an automated script when you create an
+              account, sign in, or ask for a password reset. It runs only on those pages, and it receives your IP address and
+              details about your browser and device to make that decision.
+            </li>
+          )}
           <li>
             <strong>Open-Meteo</strong> powers place search. When you type in a location box, what you type (for example "Denver") is
             sent from your browser to Open-Meteo, along with your IP address, so it can suggest matching places. We don't send your
@@ -125,6 +139,7 @@ export default function Privacy() {
         <List>
           <li>Your account, listings and photos stay until you delete them or ask us to delete your account.</li>
           <li>Deleting a listing removes it and its photos. Conversations about it are kept, so buyers and sellers don't lose their history.</li>
+          <li>Reports are kept for as long as we need them to keep the service safe, and are then deleted.</li>
           <li>
             Our providers may keep backups and server logs for a limited time, so deleted information can linger briefly before it
             disappears for good.

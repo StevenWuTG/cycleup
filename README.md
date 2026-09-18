@@ -28,6 +28,8 @@ VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 ```
 
+Optionally, `VITE_TURNSTILE_SITE_KEY` turns on the Cloudflare Turnstile bot check (see [`supabase/bot-protection.md`](supabase/bot-protection.md)).
+
 Never put the `service_role` key in this project, and never commit `.env.local` (it is gitignored).
 
 ## Database setup
@@ -42,6 +44,7 @@ In the Supabase dashboard's SQL Editor, run the files in [`supabase/`](supabase/
 6. `locations.sql`
 7. `deletion.sql`
 8. `photos.sql`
+9. `reports.sql`
 
 ## Scripts
 

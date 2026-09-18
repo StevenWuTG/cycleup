@@ -4,6 +4,8 @@ import { KeyRound, Mail } from "lucide-react";
 import { AuthCard, FormError, PrimaryButton, TextField } from "../components/AuthCard";
 import { useAuth } from "../context/auth-context";
 import { usePageTitle } from "../lib/usePageTitle";
+import Captcha from "../components/Captcha";
+import { useCaptcha } from "../lib/useCaptcha";
 
 export default function ForgotPassword() {
   usePageTitle("Reset your password");
@@ -12,19 +14,22 @@ export default function ForgotPassword() {
   const [error, setError]       = useState("");
   const [sent, setSent]         = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const captcha = useCaptcha();
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) { setError("Enter a valid email address."); return; }
+    if (!captcha.ready) { setError("Please wait for the security check to finish."); return; }
     setSubmitting(true);
     setError("");
     try {
-      await sendPasswordReset(email.trim());
+      await sendPasswordReset(email.trim(), captcha.token);
       setSent(true);
     } catch (err) {
       setError(err.message);
     } finally {
       setSubmitting(false);
+      captcha.refresh(); // a security-check token works only once
     }
   }
 
@@ -55,8 +60,9 @@ export default function ForgotPassword() {
           id="email" label="Email" type="email" autoComplete="email" placeholder="you@example.com" autoFocus
           value={email} onChange={e => { setEmail(e.target.value); setError(""); }}
         />
+        <Captcha onToken={captcha.setToken} resetKey={captcha.resetKey} />
         <FormError>{error}</FormError>
-        <PrimaryButton type="submit" disabled={submitting}>
+        <PrimaryButton type="submit" disabled={submitting || !captcha.ready}>
           {submitting ? "Sending…" : "Send reset link"}
         </PrimaryButton>
       </form>

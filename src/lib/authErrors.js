@@ -11,6 +11,7 @@ const MESSAGES = {
   email_exists: "An account with this email already exists.",
   weak_password: "That password is too weak. Use at least 8 characters with a mix of letters and numbers.",
   same_password: "Your new password must be different from your current one.",
+  captcha_failed: "The security check didn't pass. Please try again.",
   otp_expired: "This link has expired or was already used.",
   reauthentication_needed: "For security, please sign out and sign back in, then try again.",
 };

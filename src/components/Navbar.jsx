@@ -37,12 +37,12 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map(({ to, label }) => (
               <Link
                 key={to}
                 to={to}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                   pathname === to
                     ? "bg-white/15 text-white"
                     : "text-white/70 hover:text-white hover:bg-white/10"
@@ -54,13 +54,7 @@ export default function Navbar() {
           </nav>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link
-              to="/marketplace"
-              className="text-sm font-medium text-white/80 hover:text-white transition-colors"
-            >
-              Browse
-            </Link>
+          <div className="hidden lg:flex items-center gap-4 whitespace-nowrap">
             {user ? (
               <>
                 <Link to="/messages" className="relative text-sm font-medium text-white/80 hover:text-white transition-colors">
@@ -86,7 +80,7 @@ export default function Navbar() {
             )}
             <Link
               to="/post"
-              className="bg-[#52b788] hover:bg-[#74c69d] text-[#1b4332] font-semibold text-sm px-5 py-2 rounded-full transition-all shadow-sm hover:shadow-md"
+              className="bg-[#52b788] hover:bg-[#74c69d] text-[#1b4332] font-semibold text-sm px-5 py-2 rounded-full whitespace-nowrap transition-all shadow-sm hover:shadow-md"
             >
               + List Item
             </Link>
@@ -94,7 +88,7 @@ export default function Navbar() {
 
           {/* Mobile toggle */}
           <button
-            className="md:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            className="lg:hidden p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 transition-colors"
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
           >
@@ -105,7 +99,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t border-white/10 bg-[#1b4332]">
+        <div className="lg:hidden border-t border-white/10 bg-[#1b4332]">
           <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-1">
             {navLinks.map(({ to, label }) => (
               <Link

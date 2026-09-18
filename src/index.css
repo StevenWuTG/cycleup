@@ -24,7 +24,9 @@
   --font-body:    'Inter', system-ui, sans-serif;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* No global margin/padding reset here: Tailwind's preflight already resets
+   them inside a cascade layer, and an unlayered reset would override every
+   padding/margin utility class. */
 
 html { scroll-behavior: smooth; }
 

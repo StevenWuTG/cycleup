@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, MapPin, Leaf, MessageCircle, Trash2 } from "lucide-react";
+import { ArrowLeft, MapPin, Leaf, MessageCircle, Pencil, Trash2 } from "lucide-react";
 import { useListings } from "../context/listings-context";
 import { useAuth } from "../context/auth-context";
 import ListingImage from "../components/ListingImage";
@@ -125,7 +125,14 @@ export default function ItemDetail() {
             )}
 
             {isOwner ? (
-              <div className="mt-auto">
+              <div className="mt-auto space-y-3">
+                <Link
+                  to={`/item/${listing.id}/edit`}
+                  className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold py-3.5 rounded-xl transition-colors"
+                >
+                  <Pencil size={16} />
+                  Edit listing
+                </Link>
                 <button
                   onClick={handleDelete} disabled={deleting}
                   className="w-full flex items-center justify-center gap-2 border-2 border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed font-semibold py-3 rounded-xl transition-colors"
@@ -134,7 +141,7 @@ export default function ItemDetail() {
                   {deleting ? "Deleting…" : "Delete listing"}
                 </button>
                 {deleteError && <p className="text-xs text-red-500 text-center mt-2">{deleteError}</p>}
-                <p className="text-xs text-[#a0785a] text-center mt-2">This is your listing</p>
+                <p className="text-xs text-[#a0785a] text-center">This is your listing</p>
               </div>
             ) : (
               <>

@@ -4,6 +4,7 @@ import Landing from "./pages/Landing";
 import Marketplace from "./pages/Marketplace";
 import PostItem from "./pages/PostItem";
 import ItemDetail from "./pages/ItemDetail";
+import EditItem from "./pages/EditItem";
 import Auth from "./pages/Auth";
 import RequireAuth from "./components/RequireAuth";
 import { AuthProvider } from "./context/AuthContext";
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/post" element={<RequireAuth><PostItem /></RequireAuth>} />
             <Route path="/item/:id" element={<ItemDetail />} />
+            <Route path="/item/:id/edit" element={<RequireAuth><EditItem /></RequireAuth>} />
             <Route path="/login" element={<Auth mode="login" />} />
             <Route path="/signup" element={<Auth mode="signup" />} />
           </Routes>

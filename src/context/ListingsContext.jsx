@@ -17,6 +17,14 @@ async function uploadImage(file, userId) {
   return supabase.storage.from(IMAGE_BUCKET).getPublicUrl(path).data.publicUrl;
 }
 
+// Best effort: a leftover photo is harmless, so a failed cleanup never
+// fails the operation that triggered it.
+async function removeStoredImage(url) {
+  const path = url?.split(`/${IMAGE_BUCKET}/`)[1];
+  if (!path) return;
+  await supabase.storage.from(IMAGE_BUCKET).remove([decodeURIComponent(path)]);
+}
+
 export function ListingsProvider({ children }) {
   const { user } = useAuth();
   const [listings, setListings] = useState([]);
@@ -54,6 +62,27 @@ export function ListingsProvider({ children }) {
     return row;
   }
 
+  // `imageFile` replaces the photo, `removeImage` clears it, neither keeps it.
+  // Row-level security silently filters out rows the user doesn't own, so an
+  // empty result means nothing was updated. seller/user_id can't be changed
+  // (a database trigger locks them), so they're never sent.
+  async function updateListing(listing, { imageFile, removeImage, ...fields }) {
+    if (!user) throw new Error("You need to be signed in to edit a listing.");
+    const uploadedUrl = imageFile ? await uploadImage(imageFile, user.id) : null;
+    const image_url = uploadedUrl ?? (removeImage ? null : listing.image_url);
+
+    const { data, error } = await supabase
+      .from("listings").update({ ...fields, image_url }).eq("id", listing.id).select();
+    if (error || data.length === 0) {
+      await removeStoredImage(uploadedUrl); // don't orphan the new photo
+      throw error ?? new Error("You can only edit your own listings.");
+    }
+
+    setListings(prev => prev.map(l => (l.id === listing.id ? data[0] : l)));
+    if (image_url !== listing.image_url) await removeStoredImage(listing.image_url);
+    return data[0];
+  }
+
   // Row-level security silently filters out rows the user doesn't own, so an
   // empty result means nothing was deleted.
   async function deleteListing(listing) {
@@ -63,13 +92,11 @@ export function ListingsProvider({ children }) {
     if (data.length === 0) throw new Error("You can only delete your own listings.");
     setListings(prev => prev.filter(l => l.id !== listing.id));
 
-    // Best effort: the row is already gone, so a leftover photo isn't fatal.
-    const path = listing.image_url?.split(`/${IMAGE_BUCKET}/`)[1];
-    if (path) await supabase.storage.from(IMAGE_BUCKET).remove([decodeURIComponent(path)]);
+    await removeStoredImage(listing.image_url);
   }
 
   return (
-    <ListingsContext.Provider value={{ listings, loading, error, addListing, deleteListing }}>
+    <ListingsContext.Provider value={{ listings, loading, error, addListing, updateListing, deleteListing }}>
       {children}
     </ListingsContext.Provider>
   );

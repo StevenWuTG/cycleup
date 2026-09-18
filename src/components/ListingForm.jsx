@@ -7,6 +7,7 @@ import { prepareImage } from "../lib/image";
 const itemCategories = categories.filter(c => c !== "All");
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_PHOTOS = 5;
 
 const emptyForm = {
   title: "", description: "", price: "",
@@ -51,25 +52,28 @@ const inputClass = err =>
   }`;
 
 // The listing form shared by "post" and "edit". Pass `listing` to pre-fill it
-// for editing. `onSubmit({ fields, imageFile, removeImage })` does the saving;
+// for editing. `onSubmit({ fields, photos })` does the saving, where `photos` is the
+// complete ordered list (first = cover) of `{ url }` (kept) and `{ file }` (new);
 // throwing from it shows the error and keeps the form intact.
 export default function ListingForm({ listing, submitLabel, submittingLabel, onSubmit, className = "" }) {
-  const existingImageUrl = listing?.image_url ?? null;
-
   const [form, setForm]           = useState(() => formFromListing(listing));
   const [place, setPlace]         = useState(() => placeFromListing(listing));
   const [errors, setErrors]       = useState({});
-  const [imageFile, setImageFile] = useState(null);
-  const [preview, setPreview]     = useState(null);
-  const [removeExisting, setRemoveExisting] = useState(false);
+  // Ordered photos. `preview` is what the thumbnail shows: the stored URL for a
+  // kept photo, or a temporary blob URL for a newly chosen one.
+  const [photos, setPhotos]       = useState(() =>
+    (listing?.image_urls ?? []).map(url => ({ id: crypto.randomUUID(), url, preview: url })));
+  const [processing, setProcessing] = useState(false);
   const [submitting, setSubmitting]   = useState(false);
   const [submitError, setSubmitError] = useState("");
   const fileInput = useRef(null);
 
-  // Release the temporary preview URL when it's replaced or the form unmounts.
-  useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
-
-  const shownImage = preview ?? (removeExisting ? null : existingImageUrl);
+  // Blob URLs for new photos, released as photos are removed and when the form goes away.
+  const blobUrls = useRef(new Set());
+  useEffect(() => {
+    const urls = blobUrls.current;
+    return () => urls.forEach(url => URL.revokeObjectURL(url));
+  }, []);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -85,42 +89,55 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
     if (errors.category) setErrors(p => ({ ...p, category: "" }));
   }
 
-  // First click undoes a newly chosen photo (back to the current one, if any);
-  // clicking again removes the current photo.
-  function removePhoto() {
-    if (preview) {
-      setImageFile(null);
-      setPreview(null);
-      if (fileInput.current) fileInput.current.value = "";
-    } else {
-      setRemoveExisting(true);
-    }
+  // Reads the chosen files through prepareImage (which strips hidden metadata
+  // like GPS) and appends what fits. Files that can't be used are skipped and
+  // reported together rather than failing the whole batch.
+  async function addPhotos(e) {
+    const input = e.target;
+    const files = [...input.files];
+    input.value = "";
+    if (files.length === 0) return;
+
+    const room = MAX_PHOTOS - photos.length;
+    const problems = [];
+    if (files.length > room) problems.push(`A listing can have up to ${MAX_PHOTOS} photos, so ${files.length - room} weren't added.`);
+
+    setProcessing(true);
+    const prepared = await Promise.all(files.slice(0, room).map(async file => {
+      if (!file.type.startsWith("image/")) { problems.push(`${file.name} isn't an image.`); return null; }
+      if (file.size > MAX_IMAGE_BYTES) { problems.push(`${file.name} is over 5MB.`); return null; }
+      try {
+        const clean = await prepareImage(file);
+        const preview = URL.createObjectURL(clean);
+        blobUrls.current.add(preview);
+        return { id: crypto.randomUUID(), file: clean, preview };
+      } catch {
+        problems.push(`We couldn't read ${file.name}. Try a JPEG or PNG.`);
+        return null;
+      }
+    }));
+    setProcessing(false);
+
+    const added = prepared.filter(Boolean);
+    if (added.length > 0) setPhotos(prev => [...prev, ...added].slice(0, MAX_PHOTOS));
+    setErrors(p => ({ ...p, image: problems.join(" ") }));
   }
 
-  async function handleImage(e) {
-    const input = e.target;
-    const file = input.files[0];
-    if (!file) return;
-
-    let problem = "";
-    if (!file.type.startsWith("image/")) {
-      problem = "Please choose an image file (PNG, JPG, WebP).";
-    } else if (file.size > MAX_IMAGE_BYTES) {
-      problem = "Image must be 5MB or smaller.";
-    } else {
-      try {
-        // Strips hidden metadata (like GPS) before the photo ever leaves the browser.
-        const clean = await prepareImage(file);
-        setImageFile(clean);
-        setPreview(URL.createObjectURL(clean));
-        setRemoveExisting(false);
-        setErrors(p => ({ ...p, image: "" }));
-      } catch {
-        problem = "We couldn't read that photo. Try a JPEG or PNG.";
-      }
+  function removePhoto(id) {
+    const photo = photos.find(p => p.id === id);
+    if (photo?.file) {
+      URL.revokeObjectURL(photo.preview);
+      blobUrls.current.delete(photo.preview);
     }
-    if (problem) setErrors(p => ({ ...p, image: problem }));
-    input.value = "";
+    setPhotos(prev => prev.filter(p => p.id !== id));
+    setErrors(p => ({ ...p, image: "" }));
+  }
+
+  function makeCover(id) {
+    setPhotos(prev => {
+      const chosen = prev.find(p => p.id === id);
+      return [chosen, ...prev.filter(p => p.id !== id)];
+    });
   }
 
   function validate() {
@@ -152,8 +169,7 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
           longitude: place?.longitude ?? null,
           story: form.story.trim(),
         },
-        imageFile,
-        removeImage: removeExisting && !imageFile,
+        photos: photos.map(p => (p.file ? { file: p.file } : { url: p.url })),
       });
     } catch (err) {
       setSubmitError(err.message || "Something went wrong. Please try again.");
@@ -166,29 +182,18 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
   return (
     <form onSubmit={handleSubmit} noValidate className={`bg-white rounded-3xl shadow-sm border border-[#e8e0d5] p-6 sm:p-8 space-y-6 ${className}`}>
 
-      {/* Photo */}
+      {/* Photos */}
       <div>
-        <input ref={fileInput} type="file" accept="image/*" onChange={handleImage} className="hidden" />
-        {shownImage ? (
-          <div className="relative rounded-2xl overflow-hidden border border-[#e8e0d5]">
-            <img src={shownImage} alt="Item photo" className="w-full h-64 object-cover" />
-            <div className="absolute top-3 right-3 flex gap-2">
-              <button
-                type="button" onClick={() => fileInput.current.click()}
-                className="flex items-center gap-1.5 bg-white/90 hover:bg-white text-[#1a2e1e] text-xs font-semibold rounded-full px-3 py-1.5 shadow"
-              >
-                <ImagePlus size={14} />
-                Change
-              </button>
-              <button
-                type="button" onClick={removePhoto} aria-label="Remove photo"
-                className="bg-white/90 hover:bg-white text-[#1a2e1e] rounded-full p-1.5 shadow"
-              >
-                <X size={16} />
-              </button>
-            </div>
-          </div>
-        ) : (
+        <input ref={fileInput} type="file" accept="image/*" multiple onChange={addPhotos} className="hidden" />
+        <div className="flex items-center justify-between mb-2">
+          <span className="flex items-center gap-1.5 text-sm font-semibold text-[#1a2e1e]">
+            <ImagePlus size={14} />
+            Photos
+          </span>
+          <span className="text-xs text-[#a0785a]">{photos.length} of {MAX_PHOTOS}</span>
+        </div>
+
+        {photos.length === 0 ? (
           <button
             type="button" onClick={() => fileInput.current.click()}
             className="w-full border-2 border-dashed border-[#d8f3dc] rounded-2xl p-8 text-center hover:border-[#52b788] hover:bg-[#f0faf3] transition-colors"
@@ -196,10 +201,47 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
             <div className="w-12 h-12 bg-[#d8f3dc] rounded-2xl flex items-center justify-center mx-auto mb-3">
               <Upload size={20} className="text-[#2d6a4f]" />
             </div>
-            <p className="font-semibold text-[#2d6a4f] text-sm mb-1">Upload a photo</p>
-            <p className="text-xs text-[#a0785a]">PNG, JPG or WebP up to 5MB</p>
+            <p className="font-semibold text-[#2d6a4f] text-sm mb-1">Upload photos</p>
+            <p className="text-xs text-[#a0785a]">PNG, JPG or WebP, up to 5MB each · up to {MAX_PHOTOS} photos</p>
           </button>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {photos.map((photo, i) => (
+              <div key={photo.id} className="relative aspect-square rounded-2xl overflow-hidden border border-[#e8e0d5] bg-[#faf6f0]">
+                <img src={photo.preview} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                {i === 0 ? (
+                  <span className="absolute top-2 left-2 bg-[#1b4332] text-white text-[11px] font-semibold px-2 py-0.5 rounded-full">
+                    Cover
+                  </span>
+                ) : (
+                  <button
+                    type="button" onClick={() => makeCover(photo.id)}
+                    className="absolute bottom-2 left-2 bg-white/90 hover:bg-white text-[#1a2e1e] text-[11px] font-semibold px-2 py-1 rounded-full shadow"
+                  >
+                    Make cover
+                  </button>
+                )}
+                <button
+                  type="button" onClick={() => removePhoto(photo.id)} aria-label={`Remove photo ${i + 1}`}
+                  className="absolute top-2 right-2 bg-white/90 hover:bg-white text-[#1a2e1e] rounded-full p-1.5 shadow"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+            {photos.length < MAX_PHOTOS && (
+              <button
+                type="button" onClick={() => fileInput.current.click()}
+                className="aspect-square rounded-2xl border-2 border-dashed border-[#d8f3dc] hover:border-[#52b788] hover:bg-[#f0faf3] flex flex-col items-center justify-center gap-1.5 text-[#2d6a4f] text-xs font-semibold transition-colors"
+              >
+                <Upload size={20} />
+                Add photos
+              </button>
+            )}
+          </div>
         )}
+
+        {processing && <p className="text-xs text-[#8d8073] mt-2">Getting your photos ready…</p>}
         {errors.image && <p className="text-red-500 text-xs mt-1.5">{errors.image}</p>}
       </div>
 
@@ -297,7 +339,7 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
       )}
 
       <button
-        type="submit" disabled={submitting}
+        type="submit" disabled={submitting || processing}
         className="w-full bg-[#2d6a4f] hover:bg-[#1b4332] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all text-base shadow-sm hover:shadow-md flex items-center justify-center gap-2"
       >
         <Leaf size={18} />

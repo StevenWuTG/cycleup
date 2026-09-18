@@ -47,6 +47,11 @@ export default function Terms() {
           <li>Only post items you have the right to sell, and describe them honestly, including their condition, materials and where they came from.</li>
           <li>List things that fit {SITE.name}: upcycled, repurposed or handmade items made from reclaimed materials.</li>
           <li>Only upload photos and text you own or have permission to use.</li>
+          <li>
+            If you list a vehicle or vehicle part, a device, or a tool, you're responsible for having the legal right to sell it (for a
+            vehicle, that includes a clear title), for describing its condition and history honestly, and for meeting any safety, registration
+            or tax rules that apply. Wipe personal data from any device before you sell it.
+          </li>
         </List>
         <P>
           You keep ownership of your content. By posting it you give us a free, worldwide, non-exclusive licence to host, store, copy,

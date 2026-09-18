@@ -45,8 +45,8 @@ export default function EditItem() {
     );
   }
 
-  async function handleSubmit({ fields, imageFile, removeImage }) {
-    await updateListing(listing, { imageFile, removeImage, ...fields });
+  async function handleSubmit({ fields, photos }) {
+    await updateListing(listing, { photos, ...fields });
     navigate(`/item/${listing.id}`);
   }
 

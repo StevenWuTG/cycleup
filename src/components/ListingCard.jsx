@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MapPin } from "lucide-react";
+import { Images, MapPin } from "lucide-react";
 import ListingImage from "./ListingImage";
 import { tagColors } from "../data/categories";
 import { useUserLocation } from "../context/location-context";
@@ -8,11 +8,21 @@ import { formatDistance } from "../lib/distance";
 export default function ListingCard({ listing }) {
   const { distanceTo } = useUserLocation();
   const miles = distanceTo(listing);
+  const photoCount = listing.image_urls?.length ?? 0;
   return (
     <article className="relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 border border-[#e8e0d5] flex flex-col group">
       {!listing.user_id && (
         <span className="absolute top-3 left-3 z-10 bg-white/90 text-[#6b7280] text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
           Sample listing
+        </span>
+      )}
+      {photoCount > 1 && (
+        <span
+          className="absolute top-3 right-3 z-10 flex items-center gap-1 bg-black/55 text-white text-[11px] font-semibold px-2 py-1 rounded-full"
+          aria-label={`${photoCount} photos`}
+        >
+          <Images size={12} />
+          {photoCount}
         </span>
       )}
       <Link to={`/item/${listing.id}`} className="overflow-hidden">

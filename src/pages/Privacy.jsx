@@ -34,7 +34,7 @@ export default function Privacy() {
             <strong>Your profile.</strong> Your username and the month you joined.
           </li>
           <li>
-            <strong>Listings.</strong> The title, description, price, category, condition, origin story and photo you add, the city you
+            <strong>Listings.</strong> The title, description, price, category, condition, origin story and photos you add, the city you
             choose for your location (its name and the approximate coordinates of the city's centre), your username, and when it was posted.
             We never ask for a street address.
           </li>
@@ -122,7 +122,7 @@ export default function Privacy() {
       <Section title="How long we keep it">
         <List>
           <li>Your account, listings and photos stay until you delete them or ask us to delete your account.</li>
-          <li>Deleting a listing removes it and its photo. Conversations about it are kept, so buyers and sellers don't lose their history.</li>
+          <li>Deleting a listing removes it and its photos. Conversations about it are kept, so buyers and sellers don't lose their history.</li>
           <li>
             Our providers may keep backups and server logs for a limited time, so deleted information can linger briefly before it
             disappears for good.

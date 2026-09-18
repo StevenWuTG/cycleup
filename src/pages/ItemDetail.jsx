@@ -5,7 +5,7 @@ import { useListings } from "../context/listings-context";
 import { useAuth } from "../context/auth-context";
 import { useUserLocation } from "../context/location-context";
 import { formatDistance } from "../lib/distance";
-import ListingImage from "../components/ListingImage";
+import PhotoGallery from "../components/PhotoGallery";
 import { tagColors } from "../data/categories";
 
 export default function ItemDetail() {
@@ -70,9 +70,7 @@ export default function ItemDetail() {
         <div className="grid lg:grid-cols-5 gap-10">
           {/* Image */}
           <div className="lg:col-span-3">
-            <div className="rounded-3xl overflow-hidden shadow-sm border border-[#e8e0d5]">
-              <ListingImage listing={listing} className="h-80 sm:h-[28rem]" />
-            </div>
+            <PhotoGallery key={listing.id} listing={listing} />
           </div>
 
           {/* Info */}

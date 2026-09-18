@@ -8,8 +8,8 @@ export default function PostItem() {
   const { addListing }            = useListings();
   const [createdListing, setDone] = useState(null);
 
-  async function handleSubmit({ fields, imageFile }) {
-    setDone(await addListing({ imageFile, ...fields }));
+  async function handleSubmit({ fields, photos }) {
+    setDone(await addListing({ photos, ...fields }));
   }
 
   if (createdListing) return (

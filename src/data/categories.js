@@ -1,4 +1,4 @@
-export const categories = ["All", "Furniture", "Fashion", "Decor", "Garden", "Textiles", "Lighting", "Art"];
+export const categories = ["All", "Furniture", "Fashion", "Decor", "Garden", "Textiles", "Lighting", "Art", "Tech", "Tools", "Cars"];
 
 export const tagColors = {
   Furniture: "bg-amber-100 text-amber-800",
@@ -8,6 +8,9 @@ export const tagColors = {
   Textiles:  "bg-orange-100 text-orange-800",
   Lighting:  "bg-yellow-100 text-yellow-800",
   Art:       "bg-rose-100 text-rose-800",
+  Tech:      "bg-sky-100 text-sky-800",
+  Tools:     "bg-stone-200 text-stone-800",
+  Cars:      "bg-red-100 text-red-800",
   Industrial:"bg-slate-100 text-slate-700",
   Vintage:   "bg-amber-100 text-amber-800",
   Bags:      "bg-teal-100 text-teal-800",

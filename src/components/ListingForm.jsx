@@ -6,7 +6,12 @@ import { prepareImage } from "../lib/image";
 
 const itemCategories = categories.filter(c => c !== "All");
 
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+// prepareImage() re-encodes and downscales every photo regardless of how big
+// the original is, so this only needs to guard against something pathological
+// (a multi-hundred-MB file hanging the decode) — not normal camera output.
+// Modern phone cameras, especially iPhones shooting HDR, routinely produce
+// 8-15MB JPEGs that are perfectly normal photos.
+const MAX_IMAGE_BYTES = 25 * 1024 * 1024;
 const MAX_PHOTOS = 5;
 
 const emptyForm = {

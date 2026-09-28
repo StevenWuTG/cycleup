@@ -48,6 +48,7 @@ In the Supabase dashboard's SQL Editor, run the files in [`supabase/`](supabase/
 10. `sold.sql`
 11. `email-alerts.sql` (optional; emails the site owner about new reports and notifies people about
     new messages -- see [`supabase/email-alerts.md`](supabase/email-alerts.md))
+12. `rate-limits.sql` (caps new listings and messages per hour per user)
 
 ## Scripts
 

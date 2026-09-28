@@ -1,7 +1,7 @@
 import { usePageTitle } from "../lib/usePageTitle";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Leaf, Pencil, Plus, Trash2 } from "lucide-react";
+import { Leaf, Pencil, Plus, Tag, Trash2 } from "lucide-react";
 import ListingCard from "../components/ListingCard";
 import ReportButton from "../components/ReportButton";
 import { useAuth } from "../context/auth-context";
@@ -39,8 +39,9 @@ function Centered({ children }) {
 function ProfileView({ profile }) {
   usePageTitle(`@${profile.username}`);
   const { user } = useAuth();
-  const { listings, loading, deleteListing } = useListings();
+  const { listings, loading, deleteListing, setSold } = useListings();
   const [deletingId, setDeletingId] = useState(null);
+  const [togglingId, setTogglingId] = useState(null);
   const [actionError, setActionError] = useState("");
 
   const isOwn = user?.id === profile.id;
@@ -57,6 +58,18 @@ function ProfileView({ profile }) {
       setActionError(err.message || "Couldn't delete that listing.");
     } finally {
       setDeletingId(null);
+    }
+  }
+
+  async function handleToggleSold(listing) {
+    setTogglingId(listing.id);
+    setActionError("");
+    try {
+      await setSold(listing, !listing.sold);
+    } catch (err) {
+      setActionError(err.message || "Couldn't update that listing.");
+    } finally {
+      setTogglingId(null);
     }
   }
 
@@ -137,20 +150,29 @@ function ProfileView({ profile }) {
               <div key={listing.id} className="flex flex-col gap-2">
                 <ListingCard listing={listing} />
                 {isOwn && (
-                  <div className="flex gap-2">
-                    <Link
-                      to={`/item/${listing.id}/edit`}
-                      className="flex-1 flex items-center justify-center gap-1.5 bg-white border border-[#ddd6cc] hover:border-[#52b788] hover:text-[#2d6a4f] text-[#6b7280] text-sm font-medium py-2 rounded-xl transition-colors"
-                    >
-                      <Pencil size={14} />
-                      Edit
-                    </Link>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                      <Link
+                        to={`/item/${listing.id}/edit`}
+                        className="flex-1 flex items-center justify-center gap-1.5 bg-white border border-[#ddd6cc] hover:border-[#52b788] hover:text-[#2d6a4f] text-[#6b7280] text-sm font-medium py-2 rounded-xl transition-colors"
+                      >
+                        <Pencil size={14} />
+                        Edit
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(listing)} disabled={deletingId === listing.id}
+                        className="flex-1 flex items-center justify-center gap-1.5 bg-white border border-red-200 hover:bg-red-50 text-red-600 disabled:opacity-60 disabled:cursor-not-allowed text-sm font-medium py-2 rounded-xl transition-colors"
+                      >
+                        <Trash2 size={14} />
+                        {deletingId === listing.id ? "Deleting…" : "Delete"}
+                      </button>
+                    </div>
                     <button
-                      onClick={() => handleDelete(listing)} disabled={deletingId === listing.id}
-                      className="flex-1 flex items-center justify-center gap-1.5 bg-white border border-red-200 hover:bg-red-50 text-red-600 disabled:opacity-60 disabled:cursor-not-allowed text-sm font-medium py-2 rounded-xl transition-colors"
+                      onClick={() => handleToggleSold(listing)} disabled={togglingId === listing.id}
+                      className="flex items-center justify-center gap-1.5 bg-white border border-[#ddd6cc] hover:border-[#52b788] hover:text-[#2d6a4f] text-[#6b7280] disabled:opacity-60 disabled:cursor-not-allowed text-sm font-medium py-2 rounded-xl transition-colors"
                     >
-                      <Trash2 size={14} />
-                      {deletingId === listing.id ? "Deleting…" : "Delete"}
+                      <Tag size={14} />
+                      {togglingId === listing.id ? "Saving…" : listing.sold ? "Mark as available" : "Mark as sold"}
                     </button>
                   </div>
                 )}

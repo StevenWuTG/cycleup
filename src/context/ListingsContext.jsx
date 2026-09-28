@@ -111,6 +111,19 @@ export function ListingsProvider({ children }) {
     return data[0];
   }
 
+  // Toggles a listing's sold status. Doesn't touch photos, so it's a plain
+  // field update rather than going through updateListing/resolvePhotos.
+  async function setSold(listing, sold) {
+    if (!user) throw new Error("You need to be signed in to edit a listing.");
+    const { data, error } = await supabase
+      .from("listings").update({ sold }).eq("id", listing.id).select();
+    if (error || data.length === 0) {
+      throw error ?? new Error("You can only edit your own listings.");
+    }
+    setListings(prev => prev.map(l => (l.id === listing.id ? data[0] : l)));
+    return data[0];
+  }
+
   // Row-level security silently filters out rows the user doesn't own, so an
   // empty result means nothing was deleted.
   async function deleteListing(listing) {
@@ -124,7 +137,7 @@ export function ListingsProvider({ children }) {
   }
 
   return (
-    <ListingsContext.Provider value={{ listings, loading, error, addListing, updateListing, deleteListing }}>
+    <ListingsContext.Provider value={{ listings, loading, error, addListing, updateListing, setSold, deleteListing }}>
       {children}
     </ListingsContext.Provider>
   );

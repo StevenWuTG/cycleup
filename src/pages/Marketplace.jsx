@@ -12,6 +12,7 @@ import CategoryFilter from "../components/CategoryFilter";
 
 const NEAREST = "Distance: Nearest";
 const baseSortOptions = ["Newest", "Price: Low to High", "Price: High to Low"];
+const availabilityOptions = ["Available", "Sold", "All"];
 
 export default function Marketplace() {
   usePageTitle("Marketplace");
@@ -20,6 +21,7 @@ export default function Marketplace() {
   const [search, setSearch]             = useState("");
   const [activeCategory, setCategory]   = useState("All");
   const [sort, setSort]                 = useState("Newest");
+  const [availability, setAvailability] = useState("Available");
 
   // Sorting by distance only makes sense with a location; if it's cleared
   // while selected, fall back to Newest.
@@ -48,7 +50,8 @@ export default function Marketplace() {
         (item.title.toLowerCase().includes(q) ||
           item.seller.toLowerCase().includes(q) ||
           (item.location ?? "").toLowerCase().includes(q)) &&
-        (activeCategory === "All" || item.category.includes(activeCategory))
+        (activeCategory === "All" || item.category.includes(activeCategory)) &&
+        (availability === "All" || !!item.sold === (availability === "Sold"))
       );
     })
     .sort((a, b) =>
@@ -118,12 +121,26 @@ export default function Marketplace() {
           ready={!loading}
         />
 
-        {/* Count */}
-        <p className="text-sm text-[#8d8073] mb-6">
-          <span className="font-semibold text-[#1a2e1e]">{filtered.length}</span> {filtered.length === 1 ? "item" : "items"}
-          {activeCategory !== "All" && <> in <span className="font-semibold text-[#2d6a4f]">{activeCategory}</span></>}
-          {search && <> matching "<span className="font-semibold text-[#2d6a4f]">{search}</span>"</>}
-        </p>
+        {/* Count + availability filter */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <p className="text-sm text-[#8d8073]">
+            <span className="font-semibold text-[#1a2e1e]">{filtered.length}</span> {filtered.length === 1 ? "item" : "items"}
+            {activeCategory !== "All" && <> in <span className="font-semibold text-[#2d6a4f]">{activeCategory}</span></>}
+            {search && <> matching "<span className="font-semibold text-[#2d6a4f]">{search}</span>"</>}
+          </p>
+          <div role="group" aria-label="Filter by availability" className="inline-flex items-center gap-1 bg-white border border-[#e8e0d5] rounded-full p-1">
+            {availabilityOptions.map(opt => (
+              <button
+                key={opt} type="button" onClick={() => setAvailability(opt)} aria-pressed={availability === opt}
+                className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+                  availability === opt ? "bg-[#1b4332] text-white" : "text-[#6b7280] hover:text-[#2d6a4f]"
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Grid */}
         {loading ? (
@@ -145,7 +162,7 @@ export default function Marketplace() {
             <h3 className="text-lg font-semibold text-[#1a2e1e] mb-1">No items found</h3>
             <p className="text-[#8d8073] text-sm mb-4">Try a different search or category.</p>
             <button
-              onClick={() => { setSearch(""); setCategory("All"); }}
+              onClick={() => { setSearch(""); setCategory("All"); setAvailability("Available"); }}
               className="text-sm text-[#2d6a4f] font-semibold hover:underline"
             >
               Clear filters

@@ -11,7 +11,11 @@ export default function ListingCard({ listing }) {
   const photoCount = listing.image_urls?.length ?? 0;
   return (
     <article className="relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200 border border-[#e8e0d5] flex flex-col group">
-      {!listing.user_id && (
+      {listing.sold ? (
+        <span className="absolute top-3 left-3 z-10 bg-[#1a2e1e] text-white text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
+          Sold
+        </span>
+      ) : !listing.user_id && (
         <span className="absolute top-3 left-3 z-10 bg-white/90 text-[#6b7280] text-[11px] font-semibold px-2.5 py-1 rounded-full shadow-sm">
           Sample listing
         </span>
@@ -26,7 +30,7 @@ export default function ListingCard({ listing }) {
         </span>
       )}
       <Link to={`/item/${listing.id}`} className="overflow-hidden">
-        <div className="group-hover:scale-105 transition-transform duration-300">
+        <div className={`group-hover:scale-105 transition-transform duration-300 ${listing.sold ? "opacity-60" : ""}`}>
           <ListingImage listing={listing} />
         </div>
       </Link>

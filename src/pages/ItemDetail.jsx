@@ -1,7 +1,7 @@
 import { usePageTitle } from "../lib/usePageTitle";
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, MapPin, Leaf, MessageCircle, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, MapPin, Leaf, MessageCircle, Pencil, Tag, Trash2 } from "lucide-react";
 import { useListings } from "../context/listings-context";
 import { useAuth } from "../context/auth-context";
 import { useUserLocation } from "../context/location-context";
@@ -12,12 +12,14 @@ import { tagColors } from "../data/categories";
 
 export default function ItemDetail() {
   const { id } = useParams();
-  const { listings, loading, deleteListing } = useListings();
+  const { listings, loading, deleteListing, setSold } = useListings();
   const { user } = useAuth();
   const { distanceTo } = useUserLocation();
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const [savingSold, setSavingSold] = useState(false);
+  const [soldError, setSoldError] = useState("");
   const listing = listings.find(l => String(l.id) === id);
   usePageTitle(listing?.title ?? (loading ? null : "Item not found"));
   const isOwner = !!user && !!listing && listing.user_id === user.id;
@@ -33,6 +35,18 @@ export default function ItemDetail() {
     } catch (err) {
       setDeleteError(err.message || "Couldn't delete this listing.");
       setDeleting(false);
+    }
+  }
+
+  async function handleToggleSold() {
+    setSavingSold(true);
+    setSoldError("");
+    try {
+      await setSold(listing, !listing.sold);
+    } catch (err) {
+      setSoldError(err.message || "Couldn't update this listing.");
+    } finally {
+      setSavingSold(false);
     }
   }
 
@@ -79,6 +93,11 @@ export default function ItemDetail() {
           {/* Info */}
           <div className="lg:col-span-2 flex flex-col">
             <div className="flex flex-wrap gap-1.5 mb-3">
+              {listing.sold && (
+                <span className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-[#1a2e1e] text-white">
+                  Sold
+                </span>
+              )}
               {!listing.user_id && (
                 <span className="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
                   Sample listing
@@ -153,6 +172,14 @@ export default function ItemDetail() {
                   Edit listing
                 </Link>
                 <button
+                  onClick={handleToggleSold} disabled={savingSold}
+                  className="w-full flex items-center justify-center gap-2 border-2 border-[#52b788] text-[#2d6a4f] hover:bg-[#f0faf3] disabled:opacity-60 disabled:cursor-not-allowed font-semibold py-3 rounded-xl transition-colors"
+                >
+                  <Tag size={16} />
+                  {savingSold ? "Saving…" : listing.sold ? "Mark as available" : "Mark as sold"}
+                </button>
+                {soldError && <p className="text-xs text-red-500 text-center">{soldError}</p>}
+                <button
                   onClick={handleDelete} disabled={deleting}
                   className="w-full flex items-center justify-center gap-2 border-2 border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed font-semibold py-3 rounded-xl transition-colors"
                 >
@@ -163,7 +190,7 @@ export default function ItemDetail() {
                 <p className="text-xs text-[#a0785a] text-center">This is your listing</p>
               </div>
             ) : (
-              listing.user_id ? (
+              listing.user_id && !listing.sold ? (
                 <Link
                   to={`/messages/new/${listing.id}`}
                   className="w-full flex items-center justify-center gap-2 bg-[#2d6a4f] hover:bg-[#1b4332] text-white font-semibold py-3.5 rounded-xl transition-colors mt-auto"
@@ -180,7 +207,9 @@ export default function ItemDetail() {
                     <MessageCircle size={17} />
                     Contact Seller
                   </button>
-                  <p className="text-xs text-[#a0785a] text-center mt-2">Sample listing — there's no seller account to message</p>
+                  <p className="text-xs text-[#a0785a] text-center mt-2">
+                    {!listing.user_id ? "Sample listing — there's no seller account to message" : "This item has already sold"}
+                  </p>
                 </>
               )
             )}

@@ -115,7 +115,10 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
 
   // Reads the chosen files through prepareImage (which strips hidden metadata
   // like GPS) and appends what fits. Files that can't be used are skipped and
-  // reported together rather than failing the whole batch.
+  // reported together rather than failing the whole batch. Processed one at a
+  // time, not in parallel: decoding a modern phone photo before it's
+  // downscaled can take ~100MB of memory, and several full-resolution photos
+  // decoding at once is enough to exhaust a phone browser tab's memory.
   async function addPhotos(e) {
     const input = e.target;
     const files = [...input.files];
@@ -127,22 +130,21 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
     if (files.length > room) problems.push(`A listing can have up to ${MAX_PHOTOS} photos, so ${files.length - room} weren't added.`);
 
     setProcessing(true);
-    const prepared = await Promise.all(files.slice(0, room).map(async file => {
-      if (!file.type.startsWith("image/")) { problems.push(`${file.name} isn't an image.`); return null; }
-      if (file.size > MAX_IMAGE_BYTES) { problems.push(`${file.name} is over 5MB.`); return null; }
+    const added = [];
+    for (const file of files.slice(0, room)) {
+      if (!file.type.startsWith("image/")) { problems.push(`${file.name} isn't an image.`); continue; }
+      if (file.size > MAX_IMAGE_BYTES) { problems.push(`${file.name} is over 5MB.`); continue; }
       try {
         const clean = await prepareImage(file);
         const preview = URL.createObjectURL(clean);
         blobUrls.current.add(preview);
-        return { id: crypto.randomUUID(), file: clean, preview };
+        added.push({ id: crypto.randomUUID(), file: clean, preview });
       } catch {
         problems.push(`We couldn't read ${file.name}. Try a JPEG or PNG.`);
-        return null;
       }
-    }));
+    }
     setProcessing(false);
 
-    const added = prepared.filter(Boolean);
     if (added.length > 0) setPhotos(prev => [...prev, ...added].slice(0, MAX_PHOTOS));
     setErrors(p => ({ ...p, image: problems.join(" ") }));
   }

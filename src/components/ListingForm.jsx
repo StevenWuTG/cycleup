@@ -3,6 +3,7 @@ import { Leaf, Upload, Tag, DollarSign, AlignLeft, Type, MapPin, X, ImagePlus } 
 import { categories } from "../data/categories";
 import LocationPicker from "./LocationPicker";
 import { prepareImage } from "../lib/image";
+import { newId } from "../lib/id";
 
 const itemCategories = categories.filter(c => c !== "All");
 
@@ -86,7 +87,7 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
   // Ordered photos. `preview` is what the thumbnail shows: the stored URL for a
   // kept photo, or a temporary blob URL for a newly chosen one.
   const [photos, setPhotos]       = useState(() =>
-    (listing?.image_urls ?? []).map(url => ({ id: crypto.randomUUID(), url, preview: url })));
+    (listing?.image_urls ?? []).map(url => ({ id: newId(), url, preview: url })));
   const [processing, setProcessing] = useState(false);
   const [submitting, setSubmitting]   = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -138,8 +139,9 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
         const clean = await prepareImage(file);
         const preview = URL.createObjectURL(clean);
         blobUrls.current.add(preview);
-        added.push({ id: crypto.randomUUID(), file: clean, preview });
-      } catch {
+        added.push({ id: newId(), file: clean, preview });
+      } catch (err) {
+        console.error(`Couldn't prepare ${file.name}:`, err);
         problems.push(`We couldn't read ${file.name}. Try a JPEG or PNG.`);
       }
     }

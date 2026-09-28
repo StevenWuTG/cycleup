@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { ListingsContext } from "./listings-context";
 import { useAuth } from "./auth-context";
+import { newId } from "../lib/id";
 
 const IMAGE_BUCKET = "listing-images";
 
@@ -9,7 +10,7 @@ const IMAGE_BUCKET = "listing-images";
 // only let a user write to their own folder.
 async function uploadImage(file, userId) {
   const ext = file.name.split(".").pop().toLowerCase();
-  const path = `${userId}/${crypto.randomUUID()}.${ext}`;
+  const path = `${userId}/${newId()}.${ext}`;
   const { error } = await supabase.storage
     .from(IMAGE_BUCKET)
     .upload(path, file, { contentType: file.type });

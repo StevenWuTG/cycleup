@@ -88,7 +88,7 @@ export default function Privacy() {
           <li>To run the marketplace: show listings, let people message each other, and sort by distance.</li>
           <li>To let you sign in and to keep your account secure.</li>
           <li>To keep {SITE.name} safe: prevent spam and abuse, and look into reports.</li>
-          <li>To send emails about your account that you need, such as confirming your address or resetting a password. We don't send marketing email.</li>
+          <li>To send emails you need: confirming your address, resetting a password, letting you know when you get a new message (with a short preview of it), and telling us when someone submits a report. We don't send marketing email.</li>
           <li>To meet legal obligations.</li>
         </List>
         <P>We do not sell or rent your personal information, and we don't use it for advertising.</P>
@@ -103,7 +103,8 @@ export default function Privacy() {
           </li>
           <li>
             <strong>{SITE.emailProvider}</strong> sends the emails about your account (confirming your address, resetting a password,
-            confirming an email change). It sees your email address and the contents of those emails.
+            confirming an email change), the new-message alert, and the report alert we get. It sees your email address and the
+            contents of those emails — for a new-message alert, that includes a short preview of the message.
           </li>
           <li>
             <strong>Our website host</strong> delivers the site to your browser and keeps standard server logs, which include IP addresses.

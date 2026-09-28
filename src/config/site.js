@@ -7,5 +7,5 @@ export const SITE = {
   emailProvider: "Resend",
   governingLaw: "the State of Nevada, United States",
   // Bump this whenever either legal page changes in substance.
-  legalUpdated: "September 18, 2026",
+  legalUpdated: "September 28, 2026",
 };

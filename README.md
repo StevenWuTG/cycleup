@@ -45,6 +45,8 @@ In the Supabase dashboard's SQL Editor, run the files in [`supabase/`](supabase/
 7. `deletion.sql`
 8. `photos.sql`
 9. `reports.sql`
+10. `email-alerts.sql` (optional; emails the site owner about new reports and notifies people about
+    new messages -- see [`supabase/email-alerts.md`](supabase/email-alerts.md))
 
 ## Scripts
 

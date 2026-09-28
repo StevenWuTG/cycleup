@@ -14,7 +14,7 @@ export default function Auth({ mode }) {
   const location = useLocation();
   const from = location.state?.from ?? "/marketplace";
 
-  const [form, setForm]         = useState({ email: "", password: "", username: "" });
+  const [form, setForm]         = useState({ email: "", password: "", confirmPassword: "", username: "" });
   const [errors, setErrors]     = useState({});
   const [submitError, setSubmitError] = useState("");
   const [submitting, setSubmitting]   = useState(false);
@@ -44,6 +44,7 @@ export default function Auth({ mode }) {
     if (isSignUp) {
       if (!USERNAME_RE.test(form.username)) e.username = "3–20 characters: lowercase letters, numbers, underscores.";
       if (form.password.length < 8) e.password = "Password must be at least 8 characters.";
+      else if (form.confirmPassword !== form.password) e.confirmPassword = "Passwords don't match.";
     } else if (!form.password) {
       e.password = "Enter your password.";
     }
@@ -186,6 +187,18 @@ export default function Auth({ mode }) {
             </div>
           )}
         </div>
+
+        {isSignUp && (
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-semibold text-[#1a2e1e] mb-2">Confirm password</label>
+            <input
+              id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password"
+              value={form.confirmPassword} onChange={handleChange} placeholder="Type it again"
+              className={inputClass(errors.confirmPassword)}
+            />
+            {errors.confirmPassword && <p className="text-red-500 text-xs mt-1.5">{errors.confirmPassword}</p>}
+          </div>
+        )}
 
         {submitError && (
           <p role="alert" className="text-red-500 text-sm bg-red-50 border border-red-200 rounded-xl px-4 py-3">{submitError}</p>

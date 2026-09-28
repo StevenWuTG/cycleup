@@ -1,14 +1,36 @@
 const MAX_SIDE = 1600;
 const QUALITY = 0.85;
 
-// createImageBitmap(file) can fail on some real-world JPEGs that browsers
-// otherwise display fine — notably the HDR "gain map" JPEGs recent iPhones
-// save by default, which some browsers' fast decode path rejects. The
-// ordinary <img> pipeline is more permissive, so fall back to it (losing
-// nothing: modern browsers already auto-rotate <img> per EXIF on load, so a
-// bitmap taken from it is already correctly oriented without needing the
-// imageOrientation option again).
+// Browsers (including every iOS browser, which all sit on WebKit) can't
+// decode HEIC/HEIF as an image at all -- not via createImageBitmap, not via
+// <img>. iPhones store photos in that format by default ("Settings > Camera >
+// Formats > High Efficiency"), and whether the OS transcodes a given photo to
+// JPEG before handing it to a web page turns out to be inconsistent across
+// iOS versions and picker flows, so we can't rely on that happening. Decoding
+// HEIC ourselves via libheif (WASM, loaded lazily so it doesn't cost anything
+// for the common case) sidesteps that unreliability entirely.
+function looksLikeHeic(file) {
+  const type = (file.type || "").toLowerCase();
+  if (type === "image/heic" || type === "image/heif") return true;
+  if (type) return false; // a real, different declared type -- trust it
+  return /\.hei[cf]$/i.test(file.name || ""); // no type reported: fall back to the extension
+}
+
+async function convertHeic(file) {
+  const heic2any = (await import("heic2any")).default;
+  const converted = await heic2any({ blob: file, toType: "image/jpeg", quality: 0.9 });
+  // A HEIC file can hold a burst/Live Photo, which heic2any returns as an
+  // array of blobs; we only want a single cover image, so take the first.
+  return Array.isArray(converted) ? converted[0] : converted;
+}
+
+// createImageBitmap(file) can also fail on some ordinary JPEGs that browsers
+// otherwise display fine; the <img> pipeline is more permissive, so that's
+// tried next (losing nothing: modern browsers already auto-rotate <img> per
+// EXIF on load, so a bitmap taken from it is already correctly oriented
+// without needing the imageOrientation option again).
 async function decodeToBitmap(file) {
+  if (looksLikeHeic(file)) file = await convertHeic(file);
   try {
     return await createImageBitmap(file, { imageOrientation: "from-image" });
   } catch (err) {

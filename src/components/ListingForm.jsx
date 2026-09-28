@@ -208,14 +208,7 @@ export default function ListingForm({ listing, submitLabel, submittingLabel, onS
 
       {/* Photos */}
       <div>
-        {/* Deliberately not "image/*": on iOS, listing exact types (and omitting
-            image/heic) is what makes Safari transcode a HEIC library photo to
-            JPEG before handing it over, instead of passing the original HEIC
-            bytes through (which prepareImage can't decode). */}
-        <input
-          ref={fileInput} type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple
-          onChange={addPhotos} className="hidden"
-        />
+        <input ref={fileInput} type="file" accept="image/*,.heic,.heif" multiple onChange={addPhotos} className="hidden" />
         <div className="flex items-center justify-between mb-2">
           <span className="flex items-center gap-1.5 text-sm font-semibold text-[#1a2e1e]">
             <ImagePlus size={14} />
